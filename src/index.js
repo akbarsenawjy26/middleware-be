@@ -8,6 +8,7 @@ const app = express();
 const sessionStore = SequelizeStore(session.Store);
 // const apikeyModel = require("./models/api-key_models");
 // const userModel = require("./models/user_models");
+// const userModel = require("./models/device_models");
 
 const store = new sessionStore({
   db: db,
