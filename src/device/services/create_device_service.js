@@ -1,9 +1,12 @@
 const deviceModel = require("../../models/device_models");
 
-const createDevice = async (device_name, deviceUserId) => {
+const createDevice = async (device_sn, device_name, device_type, device_location, deviceUserId) => {
   try {
     const data = await deviceModel.create({
+      device_sn: device_sn,
       device_name: device_name,
+      device_type: device_type,
+      device_location: device_location,
       userId: deviceUserId,
     });
 

@@ -7,7 +7,7 @@ const getDeviceList = async (userRole, deviceUserId) => {
     let data;
     if (userRole === "admin") {
       data = await deviceModel.findAll({
-        attributes: ["guid", "device_name"],
+        attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "status"],
         include: [
           {
             model: userModel,
@@ -17,7 +17,7 @@ const getDeviceList = async (userRole, deviceUserId) => {
       });
     } else {
       data = await deviceModel.findAll({
-        attributes: ["guid", "device_name"],
+        attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "status"],
         where: {
           userId: deviceUserId,
         },
@@ -45,7 +45,7 @@ const getDeviceByGuid = async (guid, userRole, userId) => {
     if (userRole === "admin") {
       data = await deviceModel.findOne({
         where: { guid: guid },
-        attributes: ["guid", "device_name"],
+        attributes: ["guid", "device_sn", "device_name", "device_type", "device_location"],
         include: [
           {
             model: userModel,
@@ -55,7 +55,7 @@ const getDeviceByGuid = async (guid, userRole, userId) => {
       });
     } else {
       data = await deviceModel.findAll({
-        attributes: ["guid", "device_name"],
+        attributes: ["guid", "device_sn", "device_name", "device_type", "device_location"],
         where: {
           [Op.and]: [{ guid: guid }, { userId: userId }],
         },

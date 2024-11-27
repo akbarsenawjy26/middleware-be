@@ -17,12 +17,44 @@ const Device = sequelizeConnection.define(
         notEmpty: true,
       },
     },
+    device_sn: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        len: [3, 100],
+      },
+    },
     device_name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true,
         len: [3, 100],
+      },
+    },
+    device_type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        len: [3, 100],
+      },
+    },
+    device_location: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        len: [3, 100],
+      },
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "active",
+      validate: {
+        notEmpty: true,
       },
     },
     userId: {
@@ -35,8 +67,14 @@ const Device = sequelizeConnection.define(
     createdAt: {
       type: DataTypes.DATE,
     },
+    createdBy: {
+      type: DataTypes.STRING,
+    },
     updatedAt: {
       type: DataTypes.DATE,
+    },
+    updatedBy: {
+      type: DataTypes.STRING,
     },
   },
   {
