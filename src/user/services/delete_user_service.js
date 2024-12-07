@@ -1,14 +1,27 @@
-const AuthenticationModel = require("../../models/user_models");
+const userRepository = require("../../models/repository/user_repository");
 
-const deleteUser = async (guid) => {
-  try {
-    const data = await AuthenticationModel.destroy({
-      where: {
-        guid: guid,
-      },
-    });
-    return data;
-  } catch (error) {}
-};
+class UserService {
+  constructor(userRepository) {
+    this.userRepository = userRepository;
+  }
 
-module.exports = { deleteUser };
+  deleteUser = async (guid) => {
+    try {
+      const data = await this.userRepository.deleteUser(guid);
+      return data;
+    } catch (error) {}
+  };
+}
+// const deleteUser = async (guid) => {
+//   try {
+//     const data = await AuthenticationModel.destroy({
+//       where: {
+//         guid: guid,
+//       },
+//     });
+//     return data;
+//   } catch (error) {}
+// };
+
+// module.exports = { deleteUser };
+module.exports = new UserService(userRepository);

@@ -1,18 +1,32 @@
-const userModels = require("../../models/user_models");
 const argon = require("argon2");
+const userRepository = require("../../models/repository/user_repository");
 
-const createUser = async (name, username, email, password, role) => {
-  const hashPassword = await argon.hash(password);
+class UserService {
+  constructor(userRepository) {
+    this.userRepository = userRepository;
+  }
 
-  const data = await userModels.create({
-    name: name,
-    username: username,
-    email: email,
-    password: hashPassword,
-    role: role,
-  });
+  createUser = async (name, username, email, password, role) => {
+    const hashPassword = await argon.hash(password);
 
-  return data;
-};
+    const data = await this.userRepository.createUser(name, username, email, hashPassword, role);
 
-module.exports = { createUser };
+    return data;
+  };
+}
+// const createUser = async (name, username, email, password, role) => {
+//   const hashPassword = await argon.hash(password);
+
+//   const data = await userModels.create({
+//     name: name,
+//     username: username,
+//     email: email,
+//     password: hashPassword,
+//     role: role,
+//   });
+
+//   return data;
+// };
+
+// module.exports = { createUser };
+module.exports = new UserService(userRepository);

@@ -1,32 +1,25 @@
 const argon = require("argon2");
-const AuthenticationModel = require("../../models/user_models");
+const userRepository = require("../../models/repository/user_repository");
 
-const updateUser = async (guid, name, username, email, password, role) => {
-  let hashPassword;
-
-  if (password === "" || password === null) {
-    hashPassword = password;
-  } else {
-    hashPassword = await argon.hash(password);
+class UserService {
+  constructor(userRepository) {
+    this.userRepository = userRepository;
   }
-  try {
-    const data = await AuthenticationModel.update(
-      {
-        name: name,
-        username: username,
-        email: email,
-        password: hashPassword,
-        role: role,
-      },
-      {
-        where: {
-          guid: guid,
-        },
-      }
-    );
-    return data;
-  } catch (error) {}
-};
-module.exports = {
-  updateUser,
-};
+
+  updateUser = async (guid, name, username, email, password, role) => {
+    let hashPassword;
+
+    if (password === "" || password === null) {
+      const user = await this.userRepository.getUserByGuid(guid);
+      hashPassword = user.password;
+    } else {
+      hashPassword = await argon.hash(password);
+    }
+    try {
+      const data = await this.userRepository.updateUser(guid, name, username, email, hashPassword, role);
+      return data;
+    } catch (error) {}
+  };
+}
+
+module.exports = new UserService(userRepository);
