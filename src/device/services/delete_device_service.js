@@ -1,24 +1,29 @@
-const deviceModel = require("../../models/device_models");
-const { Op } = require("sequelize");
+const deviceRepository = require("../../models/repository/device_repository");
 
-const deleteDevice = async (guid, userRole, deviceUserId) => {
-  try {
-    const device = await deviceModel.findOne({ where: { guid } });
-    if (!device) return { success: false, message: "device not found" };
-
-    let data;
-    if (userRole === "admin") {
-      data = await deviceModel.destroy({ where: { guid: guid } });
-    } else {
-      if (deviceUserId !== device.userId) {
-        return { success: false, message: "access denied" };
-      }
-      data = await device.destroy({ where: { [Op.and]: [{ guid: guid }, { userId: deviceUserId }] } });
-    }
-    return data;
-  } catch (error) {
-    throw new Error(`Error fetching users: ${error.message}`);
+class DeviceService {
+  constructor(deviceRepository) {
+    this.deviceRepository = deviceRepository;
   }
-};
+  deleteDevice = async (guid, userRole, deviceUserId) => {
+    try {
+      const device = await this.deviceRepository.getDeviceByGuid(guid);
+      if (!device) return { success: false, message: "Device not found" };
 
-module.exports = { deleteDevice };
+      let data;
+      if (userRole === "admin") {
+        data = await this.deviceRepository.deleteDeviceForAdmin(guid);
+      } else {
+        if (deviceUserId !== device.userId) {
+          return { success: false, message: "access denied" };
+        }
+        data = await this.deviceRepository.deleteDeviceForUser(guid, deviceUserId);
+      }
+
+      return data;
+    } catch (error) {
+      throw new Error(`Error delete Device: ${error.message}`);
+    }
+  };
+}
+
+module.exports = new DeviceService(deviceRepository);

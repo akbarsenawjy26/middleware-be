@@ -1,19 +1,18 @@
-const deviceModel = require("../../models/device_models");
+const deviceRepository = require("../../models/repository/device_repository");
 
-const createDevice = async (device_sn, device_name, device_type, device_location, deviceUserId) => {
-  try {
-    const data = await deviceModel.create({
-      device_sn: device_sn,
-      device_name: device_name,
-      device_type: device_type,
-      device_location: device_location,
-      userId: deviceUserId,
-    });
-
-    return data;
-  } catch (error) {
-    throw new Error(`Error fetching users: ${error.message}`);
+class DeviceService {
+  constructor(deviceRepository) {
+    this.deviceRepository = deviceRepository;
   }
-};
+  createDevice = async (device_sn, device_name, device_type, device_location, deviceUserId) => {
+    try {
+      const data = await this.deviceRepository.createDevice(device_sn, device_name, device_type, device_location, deviceUserId);
 
-module.exports = { createDevice };
+      return data;
+    } catch (error) {
+      throw new Error(`Error in service layer: ${error.message}`);
+    }
+  };
+}
+
+module.exports = new DeviceService(deviceRepository);
