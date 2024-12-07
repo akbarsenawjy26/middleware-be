@@ -57,6 +57,14 @@ const Device = sequelizeConnection.define(
         notEmpty: true,
       },
     },
+    project: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        len: [3, 100],
+      },
+    },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,

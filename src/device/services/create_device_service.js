@@ -4,9 +4,9 @@ class DeviceService {
   constructor(deviceRepository) {
     this.deviceRepository = deviceRepository;
   }
-  createDevice = async (device_sn, device_name, device_type, device_location, deviceUserId) => {
+  createDevice = async (device_sn, device_name, device_type, device_location, project, deviceUserId) => {
     try {
-      const data = await this.deviceRepository.createDevice(device_sn, device_name, device_type, device_location, deviceUserId);
+      const data = await this.deviceRepository.createDevice(device_sn, device_name, device_type, device_location, project, deviceUserId);
 
       return data;
     } catch (error) {

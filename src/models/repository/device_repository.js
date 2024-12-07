@@ -6,12 +6,13 @@ class DeviceRepository {
     this.deviceModel = deviceModel;
   }
 
-  createDevice = async (device_sn, device_name, device_type, device_location, deviceUserId) => {
+  createDevice = async (device_sn, device_name, device_type, device_location, project, deviceUserId) => {
     return await deviceModel.create({
       device_sn: device_sn,
       device_name: device_name,
       device_type: device_type,
       device_location: device_location,
+      project: project,
       userId: deviceUserId,
     });
   };
@@ -23,7 +24,7 @@ class DeviceRepository {
   getDeviceByGuidForAdmin = async (guid) => {
     return await deviceModel.findOne({
       where: { guid: guid },
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location"],
+      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "project"],
       include: [
         {
           model: userModel,
@@ -35,7 +36,7 @@ class DeviceRepository {
 
   getDeviceByGuidForUser = async (guid, userId) => {
     return await deviceModel.findAll({
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location"],
+      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "project"],
       where: {
         [Op.and]: [{ guid: guid }, { userId: userId }],
       },
@@ -50,7 +51,7 @@ class DeviceRepository {
 
   getDeviceListForAdmin = async () => {
     return await deviceModel.findAll({
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "status"],
+      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "project"],
       include: [
         {
           model: userModel,
@@ -62,7 +63,7 @@ class DeviceRepository {
 
   getDeviceListForUser = async (deviceUserId) => {
     return await deviceModel.findAll({
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "status"],
+      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "project"],
       where: {
         userId: deviceUserId,
       },
@@ -83,25 +84,27 @@ class DeviceRepository {
     return await deviceModel.destroy({ where: { [Op.and]: [{ guid: guid }, { userId: deviceUserId }] } });
   };
 
-  updateDeviceForAdmin = async (guid, device_sn, device_name, device_type, device_location) => {
+  updateDeviceForAdmin = async (guid, device_sn, device_name, device_type, device_location, project) => {
     return await deviceModel.update(
       {
         device_sn: device_sn,
         device_name: device_name,
         device_type: device_type,
         device_location: device_location,
+        project: project,
       },
       { where: { guid } }
     );
   };
 
-  updateDeviceForUser = async (guid, userId, device_sn, device_name, device_type, device_location) => {
+  updateDeviceForUser = async (guid, userId, device_sn, device_name, device_type, device_location, project) => {
     return await device.update(
       {
         device_sn: device_sn,
         device_name: device_name,
         device_type: device_type,
         device_location: device_location,
+        project: project,
       },
       { where: { [Op.and]: [{ guid: guid }, { userId: userId }] } }
     );
