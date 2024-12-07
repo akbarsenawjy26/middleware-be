@@ -29,7 +29,6 @@ const sessionCheck = async (req, res) => {
     if (!result.success) {
       return res.status(404).json(responseHelper.fail(null, result.message));
     }
-    console.log(result.user.guid);
     res.status(200).json(responseHelper.success(result.user, "You're logined"));
   } catch (error) {
     return res.status(500).json(responseHelper.fail(null, "Internal server error"));

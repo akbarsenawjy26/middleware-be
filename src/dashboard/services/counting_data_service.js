@@ -1,37 +1,33 @@
-const userModels = require("../../models/user_models");
-const deviceModels = require("../../models/device_models");
-const apikeyeModels = require("../../models/api-key_models");
+const dashboardRepository = require("../../models/repository/dashboard_repository");
 
-const countingData = async (userRole, deviceUserId) => {
-  let userTotal, deviceTotal, apikeyTotal;
-
-  try {
-    if (userRole === "admin") {
-      userTotal = await userModels.count();
-      deviceTotal = await deviceModels.count();
-      apikeyTotal = await apikeyeModels.count();
-    } else {
-      userTotal = 0;
-      deviceTotal = await deviceModels.count({
-        where: {
-          userId: deviceUserId,
-        },
-      });
-      apikeyTotal = await apikeyeModels.count({
-        where: {
-          userId: deviceUserId,
-        },
-      });
-    }
-
-    return {
-      userTotal,
-      deviceTotal,
-      apikeyTotal,
-    };
-  } catch (error) {
-    throw new Error(`Error fetching users: ${error.message}`);
+class DashboardService {
+  constructor(dashboardRepository) {
+    this.dashboardRepository = dashboardRepository;
   }
-};
 
-module.exports = { countingData };
+  countingData = async (userRole, deviceUserId) => {
+    let userTotal, deviceTotal, apikeyTotal;
+
+    try {
+      if (userRole === "admin") {
+        userTotal = await this.dashboardRepository.userCounterForAdmin();
+        deviceTotal = await this.dashboardRepository.deviceCounterForAdmin();
+        apikeyTotal = await this.dashboardRepository.apiKeyCounterForAdmin();
+      } else {
+        userTotal = await this.dashboardRepository.userCounterForUser(deviceUserId);
+        deviceTotal = await this.dashboardRepository.deviceCounterForUser(deviceUserId);
+        apikeyTotal = await this.dashboardRepository.apiKeyCounterForUser(deviceUserId);
+      }
+
+      return {
+        userTotal,
+        deviceTotal,
+        apikeyTotal,
+      };
+    } catch (error) {
+      throw new Error(`Error Fetching Data Dashboard: ${error.message}`);
+    }
+  };
+}
+
+module.exports = new DashboardService(dashboardRepository);
