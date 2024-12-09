@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelizeConnection = require("../../config/auth_database_config");
 const userModels = require("./user_models");
+const projectModels = require("./project_models");
 
 const ApiKey = sequelizeConnection.define(
   "apikey_management",
@@ -8,6 +9,7 @@ const ApiKey = sequelizeConnection.define(
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
     guid: {
       type: DataTypes.STRING,
@@ -25,7 +27,29 @@ const ApiKey = sequelizeConnection.define(
         len: [3, 100],
       },
     },
+    expires_at: {
+      type: DataTypes.DATE,
+    },
+    note: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "active",
+      validate: {
+        notEmpty: true,
+      },
+    },
     userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    projectId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
@@ -35,19 +59,16 @@ const ApiKey = sequelizeConnection.define(
     createdAt: {
       type: DataTypes.DATE,
     },
-    expires_at: {
-      type: DataTypes.DATE,
-    },
-    status: {
+    createdBy: {
       type: DataTypes.STRING,
-      allowNull: false,
+      defaultValue: "system",
     },
     updatedAt: {
       type: DataTypes.DATE,
     },
-    note: {
+    updatedBy: {
       type: DataTypes.STRING,
-      allowNull: false,
+      defaultValue: "system",
     },
   },
   {
@@ -57,6 +78,8 @@ const ApiKey = sequelizeConnection.define(
 );
 
 userModels.hasMany(ApiKey);
+projectModels.hasMany(ApiKey);
 ApiKey.belongsTo(userModels, { foreignKey: "userId" });
+ApiKey.belongsTo(projectModels, { foreignKey: "projectId" });
 
 module.exports = ApiKey;

@@ -37,6 +37,8 @@ class ProjectService {
       throw new Error(`Error fetching users: ${error.message}`);
     }
   };
+
+  getProjectTopic = async () => {};
 }
 
 module.exports = new ProjectService(projectRepository);

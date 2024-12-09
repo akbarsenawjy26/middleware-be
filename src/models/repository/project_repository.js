@@ -18,7 +18,7 @@ class ProjectRepository {
 
   getProjectListForAdmin = async () => {
     return await projectModels.findAll({
-      attributes: ["guid", "vendor", "version", "project_name", "identity", "topic"],
+      attributes: ["id", "guid", "vendor", "version", "project_name", "identity", "topic"],
       include: [
         {
           model: userModel,
@@ -29,7 +29,7 @@ class ProjectRepository {
   };
   getProjectListForUser = async (deviceUserId) => {
     return await projectModels.findAll({
-      attributes: ["guid", "vendor", "version", "project_name", "identity", "topic"],
+      attributes: ["id", "guid", "vendor", "version", "project_name", "identity", "topic"],
       where: {
         userId: deviceUserId,
       },
@@ -105,6 +105,8 @@ class ProjectRepository {
       { where: { [Op.and]: [{ guid: guid }, { userId: userId }] } }
     );
   };
+
+  getTopicProject = async () => {};
 }
 
 module.exports = new ProjectRepository(projectModels);

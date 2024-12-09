@@ -1,18 +1,19 @@
 const deviceModel = require("../device_models");
 const userModel = require("../user_models");
+const projectModel = require("../project_models");
 
 class DeviceRepository {
   constructor(deviceModel) {
     this.deviceModel = deviceModel;
   }
 
-  createDevice = async (device_sn, device_name, device_type, device_location, project, deviceUserId) => {
+  createDevice = async (device_sn, device_name, device_type, device_location, projectId, deviceUserId) => {
     return await deviceModel.create({
       device_sn: device_sn,
       device_name: device_name,
       device_type: device_type,
       device_location: device_location,
-      project: project,
+      projectId: projectId,
       userId: deviceUserId,
     });
   };
@@ -24,11 +25,15 @@ class DeviceRepository {
   getDeviceByGuidForAdmin = async (guid) => {
     return await deviceModel.findOne({
       where: { guid: guid },
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "project"],
+      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "projectId"],
       include: [
         {
           model: userModel,
           attributes: ["name", "email"],
+        },
+        {
+          model: projectModel,
+          attributes: ["project_name"],
         },
       ],
     });
@@ -36,7 +41,7 @@ class DeviceRepository {
 
   getDeviceByGuidForUser = async (guid, userId) => {
     return await deviceModel.findAll({
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "project"],
+      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "projectId"],
       where: {
         [Op.and]: [{ guid: guid }, { userId: userId }],
       },
@@ -45,17 +50,25 @@ class DeviceRepository {
           model: userModel,
           attributes: ["name", "email"],
         },
+        {
+          model: projectModel,
+          attributes: ["project_name"],
+        },
       ],
     });
   };
 
   getDeviceListForAdmin = async () => {
     return await deviceModel.findAll({
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "project"],
+      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "projectId"],
       include: [
         {
           model: userModel,
           attributes: ["name", "email"],
+        },
+        {
+          model: projectModel,
+          attributes: ["project_name"],
         },
       ],
     });
@@ -63,7 +76,7 @@ class DeviceRepository {
 
   getDeviceListForUser = async (deviceUserId) => {
     return await deviceModel.findAll({
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "project"],
+      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "projectId"],
       where: {
         userId: deviceUserId,
       },
@@ -71,6 +84,10 @@ class DeviceRepository {
         {
           model: userModel,
           attributes: ["name", "email"],
+        },
+        {
+          model: projectModel,
+          attributes: ["project_name"],
         },
       ],
     });
@@ -84,27 +101,27 @@ class DeviceRepository {
     return await deviceModel.destroy({ where: { [Op.and]: [{ guid: guid }, { userId: deviceUserId }] } });
   };
 
-  updateDeviceForAdmin = async (guid, device_sn, device_name, device_type, device_location, project) => {
+  updateDeviceForAdmin = async (guid, device_sn, device_name, device_type, device_location, projectId) => {
     return await deviceModel.update(
       {
         device_sn: device_sn,
         device_name: device_name,
         device_type: device_type,
         device_location: device_location,
-        project: project,
+        projectId: projectId,
       },
       { where: { guid } }
     );
   };
 
-  updateDeviceForUser = async (guid, userId, device_sn, device_name, device_type, device_location, project) => {
+  updateDeviceForUser = async (guid, userId, device_sn, device_name, device_type, device_location, projectId) => {
     return await device.update(
       {
         device_sn: device_sn,
         device_name: device_name,
         device_type: device_type,
         device_location: device_location,
-        project: project,
+        projectId: projectId,
       },
       { where: { [Op.and]: [{ guid: guid }, { userId: userId }] } }
     );

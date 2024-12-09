@@ -7,6 +7,7 @@ const Authentication = sequelizeConnection.define(
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
     guid: {
       type: DataTypes.STRING,
@@ -53,11 +54,27 @@ const Authentication = sequelizeConnection.define(
         notEmpty: true,
       },
     },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "active",
+      validate: {
+        notEmpty: true,
+      },
+    },
     createdAt: {
       type: DataTypes.DATE,
     },
+    createdBy: {
+      type: DataTypes.STRING,
+      defaultValue: "system",
+    },
     updatedAt: {
       type: DataTypes.DATE,
+    },
+    updatedBy: {
+      type: DataTypes.STRING,
+      defaultValue: "system",
     },
   },
   {

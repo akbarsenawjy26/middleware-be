@@ -8,7 +8,7 @@ class ApiKeyService {
     this.ApiKeyRepository = ApiKeyRepository;
   }
 
-  createApiKey = async (userId, deviceUserId, expires_at, statusApi, note) => {
+  createApiKey = async (userId, deviceUserId, expires_at, note, projectId) => {
     try {
       let expiryDate = null;
 
@@ -36,10 +36,8 @@ class ApiKeyService {
       }
 
       const apiKey = await this.generateApiKey.generateApiKey(userId);
-      console.log("user Guid:", userId);
-      console.log("Api Key:", apiKey);
 
-      const data = await this.ApiKeyRepository.createApiKey(apiKey, deviceUserId, expiryDate, statusApi, note);
+      const data = await this.ApiKeyRepository.createApiKey(apiKey, deviceUserId, expiryDate, note, projectId);
 
       return data;
     } catch (error) {
