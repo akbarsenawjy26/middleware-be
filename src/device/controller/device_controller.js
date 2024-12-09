@@ -6,9 +6,9 @@ const serviceUpdateDevice = require("../services/update_device_service");
 
 class DeviceController {
   createDevice = async (req, res) => {
-    const { device_sn, device_name, device_type, device_location, project } = req.body;
+    const { device_sn, device_name, device_type, device_location, projectId } = req.body;
     try {
-      const data = await serviceCreateDevice.createDevice(device_sn, device_name, device_type, device_location, project, req.deviceUserId);
+      const data = await serviceCreateDevice.createDevice(device_sn, device_name, device_type, device_location, projectId, req.deviceUserId);
       res.status(201).json(responseHelper.success(data, "Success create new device"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
@@ -38,11 +38,11 @@ class DeviceController {
 
   updateDevice = async (req, res) => {
     const { guid } = req.params;
-    const { device_sn, device_name, device_type, device_location, project } = req.body;
+    const { device_sn, device_name, device_type, device_location, projectId } = req.body;
 
     try {
       if (device_name !== null) {
-        const data = await serviceUpdateDevice.updateDeviceName(guid, device_sn, device_name, device_type, device_location, project, req.userRole, req.deviceUserId);
+        const data = await serviceUpdateDevice.updateDeviceName(guid, device_sn, device_name, device_type, device_location, projectId, req.userRole, req.deviceUserId);
         res.status(200).json(responseHelper.success(data, "success update data"));
       }
     } catch (error) {

@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelizeConnection = require("../../config/auth_database_config");
 const userModels = require("./user_models");
+const projectModels = require("./project_models");
 
 const Device = sequelizeConnection.define(
   "device_management",
@@ -8,6 +9,7 @@ const Device = sequelizeConnection.define(
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
     guid: {
       type: DataTypes.STRING,
@@ -57,15 +59,14 @@ const Device = sequelizeConnection.define(
         notEmpty: true,
       },
     },
-    project: {
-      type: DataTypes.STRING,
+    userId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [3, 100],
       },
     },
-    userId: {
+    projectId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
@@ -77,12 +78,14 @@ const Device = sequelizeConnection.define(
     },
     createdBy: {
       type: DataTypes.STRING,
+      defaultValue: "system",
     },
     updatedAt: {
       type: DataTypes.DATE,
     },
     updatedBy: {
       type: DataTypes.STRING,
+      defaultValue: "system",
     },
   },
   {
@@ -92,6 +95,8 @@ const Device = sequelizeConnection.define(
 );
 
 userModels.hasMany(Device);
+projectModels.hasMany(Device);
 Device.belongsTo(userModels, { foreignKey: "userId" });
+Device.belongsTo(projectModels, { foreignKey: "projectId" });
 
 module.exports = Device;

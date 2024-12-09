@@ -26,11 +26,12 @@ class ApiKeyController {
   };
 
   createApiKey = async (req, res) => {
-    const { expires_date, note } = req.body;
+    const { expires_date, note, projectId } = req.body;
     try {
       console.log("Expires Date:", expires_date);
       console.log("Note:", note);
-      const data = await serviceCreateApiKey.createApiKey(req.userId, req.deviceUserId, expires_date, "active", note);
+      console.log("ProjectId:", projectId);
+      const data = await serviceCreateApiKey.createApiKey(req.userId, req.deviceUserId, expires_date, note, projectId);
 
       res.status(201).json(responseHelper.success(data, "Success create apikey"));
     } catch (error) {

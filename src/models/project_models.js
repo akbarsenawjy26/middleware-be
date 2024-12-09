@@ -8,6 +8,7 @@ const Project = sequelizeConnection.define(
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
     guid: {
       type: DataTypes.STRING,
@@ -92,13 +93,11 @@ const Project = sequelizeConnection.define(
     timestamps: true,
     hooks: {
       beforeCreate: (project, options) => {
-        // Set default value for 'topic' if it's not provided
         if (!project.topic) {
           project.topic = `${project.vendor}/${project.version}/${project.identity}/#`;
         }
       },
       beforeUpdate: (project, options) => {
-        // Set default value for 'topic' if it's not provided during update
         if (!project.topic) {
           project.topic = `${project.vendor}/${project.version}/${project.identity}/#`;
         }

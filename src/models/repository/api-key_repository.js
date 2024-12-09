@@ -1,18 +1,19 @@
 const apiKeyModel = require("../api-key_models");
 const userModel = require("../user_models");
+const projectModel = require("../project_models");
 
 class ApiKeyRepository {
   constructor(apiKeyModel) {
     this.apiKeyModel = apiKeyModel;
   }
 
-  createApiKey = async (apiKey, deviceUserId, expiryDate, statusApi, note) => {
+  createApiKey = async (apiKey, deviceUserId, expiryDate, note, projectId) => {
     return await apiKeyModel.create({
       api_key: apiKey,
       userId: deviceUserId,
       expires_at: expiryDate,
-      status: statusApi,
       note: note,
+      projectId: projectId,
     });
   };
 
@@ -23,6 +24,10 @@ class ApiKeyRepository {
         {
           model: userModel,
           attributes: ["name", "email"],
+        },
+        {
+          model: projectModel,
+          attributes: ["project_name"],
         },
       ],
     });
@@ -39,6 +44,10 @@ class ApiKeyRepository {
           model: userModel,
           attributes: ["name", "email"],
         },
+        {
+          model: projectModel,
+          attributes: ["project_name"],
+        },
       ],
     });
   };
@@ -50,11 +59,15 @@ class ApiKeyRepository {
   getApiKeyByGuidForAdmin = async (guid) => {
     return apiKeyModel.findOne({
       where: { guid: guid },
-      attributes: ["guid", "note"],
+      attributes: ["guid", "note", "projectId"],
       include: [
         {
           model: userModel,
           attributes: ["name", "email"],
+        },
+        {
+          model: projectModel,
+          attributes: ["project_name"],
         },
       ],
     });
@@ -62,7 +75,7 @@ class ApiKeyRepository {
 
   getApiKeyByGuidForUser = async (guid, userId) => {
     return await apiKeyModel.findOne({
-      attributes: ["guid", "note"],
+      attributes: ["guid", "note", "projectId"],
       where: {
         [Op.and]: [{ guid: guid }, { userId: userId }],
       },
@@ -70,6 +83,10 @@ class ApiKeyRepository {
         {
           model: userModel,
           attributes: ["name", "email"],
+        },
+        {
+          model: projectModel,
+          attributes: ["project_name"],
         },
       ],
     });
@@ -83,17 +100,25 @@ class ApiKeyRepository {
     return await apiKeyModel.destroy({ where: { [Op.and]: [{ guid: guid }, { userId: deviceUserId }] } });
   };
 
-  updateApiKeyForAdmin = async (guid, note, expiryDate) => {
-    return await apiKeyModel.update({ note: note, expires_at: expiryDate }, { where: { guid } });
+  updateApiKeyForAdmin = async (guid, note, expiryDate, projetId) => {
+    return await apiKeyModel.update({ note: note, expires_at: expiryDate, projetId: projetId }, { where: { guid } });
   };
-  updateApiKeyForUser = async (guid, note, expiryDate, userId) => {
+  updateApiKeyForUser = async (guid, note, expiryDate, projetId, userId) => {
     return await apikey.update(
       {
         note: note,
         expires_at: expiryDate,
+        projetId: projetId,
       },
       { where: { [Op.and]: [{ guid: guid }, { userId: userId }] } }
     );
+  };
+
+  checkApiKey = async (apiKey) => {
+    return await apiKeyModel.findOne({
+      attributes: ["status"],
+      where: { api_key: apiKey },
+    });
   };
 }
 

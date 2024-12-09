@@ -13,7 +13,6 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"),
 // const projectModel = require("./models/project_models");
 // const apikeyModel = require("./models/api-key_models");
 // const userModel = require("./models/user_models");
-// const userModel = require("./models/device_models");
 // const deviceModel = require("./models/device_models");
 
 const store = new sessionStore({

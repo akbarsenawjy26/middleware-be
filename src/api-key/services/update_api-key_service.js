@@ -8,7 +8,7 @@ class ApiKeyService {
     this.ApiKeyRepository = ApiKeyRepository;
   }
 
-  updateApiKey = async (guid, note, expires_at, userRole, userId) => {
+  updateApiKey = async (guid, note, expires_at, userRole, projetId, userId) => {
     try {
       let expiryDate = null;
 
@@ -40,13 +40,13 @@ class ApiKeyService {
 
       let data;
       if (userRole === "admin") {
-        data = await this.ApiKeyRepository.updateApiKeyForAdmin(guid, note, expiryDate);
+        data = await this.ApiKeyRepository.updateApiKeyForAdmin(guid, note, expiryDate, projetId);
       } else {
         if (userId !== apikey.userId) {
           return { success: false, message: "access denied" };
         }
 
-        data = await this.ApiKeyRepository.updateApiKeyForUser(guid, note, expiryDate, userId);
+        data = await this.ApiKeyRepository.updateApiKeyForUser(guid, note, expiryDate, projetId, userId);
       }
       return data;
     } catch (error) {
