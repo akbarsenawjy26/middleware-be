@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const projectModels = require("../../models/project_models");
 const userModel = require("../../models/user_models");
 
@@ -106,7 +107,16 @@ class ProjectRepository {
     );
   };
 
-  getTopicProject = async () => {};
+  getTopicProject = async (projectId) => {
+    return await projectModels.findOne(
+      {
+        attributes: ["status", "topic"],
+      },
+      {
+        where: { projectId: projectId },
+      }
+    );
+  };
 }
 
 module.exports = new ProjectRepository(projectModels);

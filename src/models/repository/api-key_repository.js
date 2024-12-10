@@ -116,7 +116,7 @@ class ApiKeyRepository {
 
   checkApiKey = async (apiKey) => {
     return await apiKeyModel.findOne({
-      attributes: ["status"],
+      attributes: ["status", "projectId"],
       where: { api_key: apiKey },
     });
   };

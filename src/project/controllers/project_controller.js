@@ -65,6 +65,15 @@ class ProjectController {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
+
+  getTopic = async (req, res) => {
+    try {
+      const data = await serviceGetProject.getProjectTopic(req.projectId);
+      res.status(200).json(responseHelper.success(data));
+    } catch (error) {
+      res.status(500).json(responseHelper.error(error.message));
+    }
+  };
 }
 
 module.exports = new ProjectController();
