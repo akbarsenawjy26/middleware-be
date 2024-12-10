@@ -38,7 +38,10 @@ class ProjectService {
     }
   };
 
-  getProjectTopic = async () => {};
+  getProjectTopic = async (projectId) => {
+    const project = await this.projectRepository.getTopicProject(projectId);
+    return project;
+  };
 }
 
 module.exports = new ProjectService(projectRepository);
