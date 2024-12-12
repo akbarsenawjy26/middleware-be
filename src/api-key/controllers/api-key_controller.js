@@ -6,8 +6,9 @@ const responseHelper = require("../../../utils/response_utils");
 
 class ApiKeyController {
   getApiKeyList = async (req, res) => {
+    const { size, page } = req.query;
     try {
-      const data = await serviceGetApiKey.getApiKeyList(req.userRole, req.deviceUserId);
+      const data = await serviceGetApiKey.getApiKeyList(req.userRole, req.deviceUserId, size, page);
       res.status(200).json(responseHelper.success(data, "Success get All data"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));

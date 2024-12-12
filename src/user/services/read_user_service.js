@@ -5,10 +5,21 @@ class UserService {
     this.userRepository = userRepository;
   }
 
-  getUserList = async () => {
+  getUserList = async (size, page) => {
     try {
-      const data = await this.userRepository.getUserList();
-      return data;
+      const limit = size ? parseInt(size) : 10;
+      const offset = page ? (parseInt(page) - 1) * limit : 0;
+
+      let data, totalData;
+      totalData = await this.userRepository.countData();
+      data = await this.userRepository.getUserList(limit, offset);
+
+      return {
+        totalItems: totalData,
+        currentPage: page ? parseInt(page) : 1,
+        totalPages: Math.ceil(totalData / limit),
+        data,
+      };
     } catch (error) {
       throw new Error(`Error fetching users: ${error.message}`);
     }

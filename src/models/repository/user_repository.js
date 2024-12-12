@@ -23,8 +23,11 @@ class UserRepository {
     });
   };
 
-  getUserList = async () => {
-    return await userModels.findAll();
+  getUserList = async (limit, offset) => {
+    return await userModels.findAll({
+      limit,
+      offset,
+    });
   };
 
   getUserByGuid = async (guid) => {
@@ -67,6 +70,10 @@ class UserRepository {
         },
       }
     );
+  };
+
+  countData = async () => {
+    return await userModels.count();
   };
 }
 
