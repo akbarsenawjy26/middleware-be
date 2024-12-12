@@ -1,6 +1,7 @@
 const apiKeyModel = require("../api-key_models");
 const userModel = require("../user_models");
 const projectModel = require("../project_models");
+const { where } = require("sequelize");
 
 class ApiKeyRepository {
   constructor(apiKeyModel) {
@@ -17,8 +18,10 @@ class ApiKeyRepository {
     });
   };
 
-  getApiKeyListForAdmin = async () => {
+  getApiKeyListForAdmin = async (limit, offset) => {
     return await apiKeyModel.findAll({
+      limit,
+      offset,
       attributes: ["guid", "api_key", "expires_at", "status", "note"],
       include: [
         {
@@ -33,7 +36,7 @@ class ApiKeyRepository {
     });
   };
 
-  getApiKeyListForUser = async (deviceUserId) => {
+  getApiKeyListForUser = async (deviceUserId, limit, offset) => {
     return await apiKeyModel.findAll({
       attributes: ["guid", "api_key", "expires_at", "status", "note"],
       where: {
@@ -118,6 +121,16 @@ class ApiKeyRepository {
     return await apiKeyModel.findOne({
       attributes: ["status", "projectId"],
       where: { api_key: apiKey },
+    });
+  };
+
+  countDataAdmin = async () => {
+    return apiKeyModel.count();
+  };
+
+  countDataUser = async (deviceUserId) => {
+    return apiKeyModel.count({
+      where: { deviceUserId },
     });
   };
 }

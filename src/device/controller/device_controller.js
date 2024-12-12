@@ -16,8 +16,10 @@ class DeviceController {
   };
 
   getDeviceList = async (req, res) => {
+    const { size, page } = req.query;
+
     try {
-      const data = await serviceGetDevice.getDeviceList(req.userRole, req.deviceUserId);
+      const data = await serviceGetDevice.getDeviceList(req.userRole, req.deviceUserId, size, page);
       res.status(200).json(responseHelper.success(data, "Success get All data"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));

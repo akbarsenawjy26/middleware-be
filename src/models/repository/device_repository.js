@@ -58,8 +58,10 @@ class DeviceRepository {
     });
   };
 
-  getDeviceListForAdmin = async () => {
+  getDeviceListForAdmin = async (limit, offset) => {
     return await deviceModel.findAll({
+      limit,
+      offset,
       attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "projectId"],
       include: [
         {
@@ -74,8 +76,10 @@ class DeviceRepository {
     });
   };
 
-  getDeviceListForUser = async (deviceUserId) => {
+  getDeviceListForUser = async (deviceUserId, limit, offset) => {
     return await deviceModel.findAll({
+      limit,
+      offset,
       attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "projectId"],
       where: {
         userId: deviceUserId,
@@ -125,6 +129,16 @@ class DeviceRepository {
       },
       { where: { [Op.and]: [{ guid: guid }, { userId: userId }] } }
     );
+  };
+
+  countDataAdmin = async () => {
+    return await deviceModel.count();
+  };
+
+  countDataUser = async (deviceUserId) => {
+    return await deviceModel.count({
+      where: { deviceUserId },
+    });
   };
 }
 

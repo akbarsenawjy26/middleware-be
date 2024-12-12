@@ -17,8 +17,10 @@ class ProjectRepository {
     });
   };
 
-  getProjectListForAdmin = async () => {
+  getProjectListForAdmin = async (limit, offset) => {
     return await projectModels.findAll({
+      limit,
+      offset,
       attributes: ["id", "guid", "vendor", "version", "project_name", "identity", "topic"],
       include: [
         {
@@ -28,8 +30,11 @@ class ProjectRepository {
       ],
     });
   };
-  getProjectListForUser = async (deviceUserId) => {
+
+  getProjectListForUser = async (deviceUserId, limit, offset) => {
     return await projectModels.findAll({
+      limit,
+      offset,
       attributes: ["id", "guid", "vendor", "version", "project_name", "identity", "topic"],
       where: {
         userId: deviceUserId,
@@ -116,6 +121,16 @@ class ProjectRepository {
         where: { projectId: projectId },
       }
     );
+  };
+
+  countDataAdmin = async () => {
+    return await projectModels.count();
+  };
+
+  countDataUser = async (deviceUserId) => {
+    return await projectModels.count({
+      where: { deviceUserId },
+    });
   };
 }
 
