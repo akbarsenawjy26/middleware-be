@@ -1,65 +1,71 @@
 const responseHelper = require("../../../utils/response_utils");
-const serviceGetDevice = require("../services/read_device_service");
-const serviceCreateDevice = require("../services/create_device_service");
-const serviceDeleteDevice = require("../services/delete_device_service");
-const serviceUpdateDevice = require("../services/update_device_service");
+const serviceGet = require("../services/read_device_service");
+const serviceCreate = require("../services/create_device_service");
+const serviceDelete = require("../services/delete_device_service");
+const serviceUpdate = require("../services/update_device_service");
 
 class DeviceController {
-  createDevice = async (req, res) => {
-    const { device_sn, device_name, device_type, device_location, projectId } = req.body;
+  constructor(serviceCreate, serviceGet, serviceUpdate, serviceDelete) {
+    this.serviceCreate = serviceCreate;
+    this.serviceGet = serviceGet;
+    this.serviceUpdate = serviceUpdate;
+    this.serviceDelete = serviceDelete;
+  }
+  createController = async (req, res) => {
+    const { device_sn, device_name, device_location, projectId, tenantId, typeId } = req.body;
     try {
-      const data = await serviceCreateDevice.createDevice(device_sn, device_name, device_type, device_location, projectId, req.deviceUserId);
-      res.status(201).json(responseHelper.success(data, "Success create new device"));
+      const data = await this.serviceCreate.create(device_sn, device_name, device_location, projectId, req.deviceUserId, tenantId, typeId);
+      res.status(201).json(responseHelper.success(data, "Success Create new Device"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  getDeviceList = async (req, res) => {
+  getListController = async (req, res) => {
     const { size, page } = req.query;
 
     try {
-      const data = await serviceGetDevice.getDeviceList(req.userRole, req.deviceUserId, size, page);
-      res.status(200).json(responseHelper.success(data, "Success get All data"));
+      const data = await this.serviceGet.getList(req.userRole, req.deviceUserId, size, page);
+      res.status(200).json(responseHelper.success(data, "Success Get All Device"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  getDeviceByGuid = async (req, res) => {
+  getByGuidController = async (req, res) => {
     const { guid } = req.params;
 
     try {
-      const data = await serviceGetDevice.getDeviceByGuid(guid, req.userRole, req.deviceUserId);
+      const data = await this.serviceGet.getByGuid(guid, req.userRole, req.deviceUserId);
 
-      res.status(200).json(responseHelper.success(data, "Success get All data"));
+      res.status(200).json(responseHelper.success(data, `Success Get Device by Guid: ${guid}`));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  updateDevice = async (req, res) => {
+  updateController = async (req, res) => {
     const { guid } = req.params;
-    const { device_sn, device_name, device_type, device_location, projectId } = req.body;
+    const { device_sn, device_name, device_location, projectId, tenantId, typeId } = req.body;
 
     try {
       if (device_name !== null) {
-        const data = await serviceUpdateDevice.updateDeviceName(guid, device_sn, device_name, device_type, device_location, projectId, req.userRole, req.deviceUserId);
-        res.status(200).json(responseHelper.success(data, "success update data"));
+        const data = await this.serviceUpdate.update(guid, device_sn, device_name, device_location, projectId, req.userRole, req.deviceUserId, tenantId, typeId);
+        res.status(200).json(responseHelper.success(data, "Success Update Data"));
       }
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  deleteDevice = async (req, res) => {
+  deleteController = async (req, res) => {
     const { guid } = req.params;
     try {
-      const data = await serviceDeleteDevice.deleteDevice(guid, req.userRole, req.deviceUserId);
-      if (data.message === "device not found") {
+      const data = await this.serviceDelete.delete(guid, req.userRole, req.deviceUserId);
+      if (data.message === "Device Not Found") {
         return res.status(400).json(responseHelper.fail(null, data.message));
       }
-      if (data.message === "access denied") {
+      if (data.message === "Access Denied") {
         return res.status(403).json(responseHelper.fail(null, data.message));
       }
 
@@ -70,4 +76,4 @@ class DeviceController {
   };
 }
 
-module.exports = new DeviceController();
+module.exports = new DeviceController(serviceCreate, serviceGet, serviceUpdate, serviceDelete);

@@ -1,29 +1,29 @@
-const ApiKeyRepository = require("../../models/repository/api-key_repository");
+const repository = require("../../models/repository/api-key_repository");
 
 class ApiKeyService {
-  constructor(ApiKeyRepository) {
-    this.ApiKeyRepository = ApiKeyRepository;
+  constructor(repository) {
+    this.repository = repository;
   }
 
-  deleteApiKey = async (guid, userRole, deviceUserId) => {
+  delete = async (guid, userRole, deviceUserId) => {
     try {
-      const apikey = await this.ApiKeyRepository.getApiKeyByGuid(guid);
-      if (!apikey) return { success: false, message: "API Key not found" };
+      const apikey = await this.repository.getByGuid(guid);
+      if (!apikey) return { success: false, message: "API Key Not Found" };
 
       let data;
       if (userRole === "admin") {
-        data = await this.ApiKeyRepository.deleteApiKeyForAdmin(guid);
+        data = await this.repository.deleteForAdmin(guid);
       } else {
         if (deviceUserId !== apikey.userId) {
-          return { success: false, message: "access denied" };
+          return { success: false, message: "Access Denied" };
         }
-        data = await this.ApiKeyRepository.deleteApiKeyForUser(guid, deviceUserId);
+        data = await this.repository.deleteForUser(guid, deviceUserId);
       }
       return data;
     } catch (error) {
-      throw new Error(`Error Deleting API Key: ${error.message}`);
+      throw new Error(`Error Deleting API Key In Service Layer: ${error.message}`);
     }
   };
 }
 
-module.exports = new ApiKeyService(ApiKeyRepository);
+module.exports = new ApiKeyService(repository);

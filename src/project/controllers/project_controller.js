@@ -1,36 +1,43 @@
 const responseHelper = require("../../../utils/response_utils");
-const serviceCreateProject = require("../services/create_project_service");
-const serviceGetProject = require("../services/read_project_service");
-const serviceDeleteProject = require("../services/delete_project_service");
-const serviceUpdateProject = require("../services/update_project_service");
+const serviceCreate = require("../services/create_project_service");
+const serviceGet = require("../services/read_project_service");
+const serviceDelete = require("../services/delete_project_service");
+const serviceUpdate = require("../services/update_project_service");
 
 class ProjectController {
-  createProject = async (req, res) => {
-    const { vendor, version, project_name, identity } = req.body;
+  constructor(serviceCreate, serviceGet, serviceDelete, serviceUpdate) {
+    this.serviceCreate = serviceCreate;
+    this.serviceGet = serviceGet;
+    this.serviceDelete = serviceDelete;
+    this.serviceUpdate = serviceUpdate;
+  }
+
+  createController = async (req, res) => {
+    const { vendor, version, project_name, identity, tenantId } = req.body;
 
     try {
-      const data = await serviceCreateProject.createProject(vendor, version, project_name, identity, req.deviceUserId);
-      res.status(201).json(responseHelper.success(data, "Success create new device"));
+      const data = await this.serviceCreate.create(req.deviceUserId, vendor, version, project_name, identity, tenantId);
+      res.status(201).json(responseHelper.success(data, "Success Create New Project"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  getProjectList = async (req, res) => {
+  getListController = async (req, res) => {
     const { size, page } = req.query;
     try {
-      const data = await serviceGetProject.getProjectList(req.userRole, req.deviceUserId, size, page);
+      const data = await this.serviceGet.getList(req.userRole, req.deviceUserId, size, page);
       res.status(200).json(responseHelper.success(data, "Success get All data"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  getProjectByGuid = async (req, res) => {
+  getByGuidController = async (req, res) => {
     const { guid } = req.params;
 
     try {
-      const data = await serviceGetProject.getProjectByGuid(guid, req.userRole, req.deviceUserId);
+      const data = await this.serviceGet.getByGuid(guid, req.userRole, req.deviceUserId);
 
       res.status(200).json(responseHelper.success(data, "Success get Project data"));
     } catch (error) {
@@ -38,22 +45,22 @@ class ProjectController {
     }
   };
 
-  updateProject = async (req, res) => {
+  updateController = async (req, res) => {
     const { guid } = req.params;
-    const { vendor, version, project_name, identity } = req.body;
+    const { vendor, version, project_name, identity, tenantId } = req.body;
 
     try {
-      const data = await serviceUpdateProject.updateProject(guid, vendor, version, project_name, identity, req.userRole, req.deviceUserId);
+      const data = await this.serviceUpdate.update(guid, vendor, version, project_name, identity, tenantId, req.userRole, req.deviceUserId);
       res.status(200).json(responseHelper.success(data, "success update data"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  deleteProject = async (req, res) => {
+  deleteController = async (req, res) => {
     const { guid } = req.params;
     try {
-      const data = await serviceDeleteProject.deleteProject(guid, req.userRole, req.deviceUserId);
+      const data = await this.serviceDelete.delete(guid, req.userRole, req.deviceUserId);
       if (data.message === "project not found") {
         return res.status(400).json(responseHelper.fail(null, data.message));
       }
@@ -67,9 +74,10 @@ class ProjectController {
     }
   };
 
-  getTopic = async (req, res) => {
+  getTopicController = async (req, res) => {
     try {
-      const data = await serviceGetProject.getProjectTopic(req.projectId);
+      console.log("ProjectId:", req.projectId);
+      const data = await this.serviceGet.getProjectTopic(req.projectId);
       res.status(200).json(responseHelper.success(data));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
@@ -77,4 +85,4 @@ class ProjectController {
   };
 }
 
-module.exports = new ProjectController();
+module.exports = new ProjectController(serviceCreate, serviceGet, serviceDelete, serviceUpdate);

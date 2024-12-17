@@ -1,46 +1,46 @@
-const projectRepository = require("../../models/repository/project_repository");
+const repository = require("../../models/repository/project_repository");
 
 class ProjectService {
-  constructor(projectRepository) {
-    this.projectRepository = projectRepository;
+  constructor(repository) {
+    this.repository = repository;
   }
 
-  getProjectByGuid = async (guid, userRole, userId) => {
+  getByGuid = async (guid, userRole, userId) => {
     try {
-      const project = await this.projectRepository.getProjectByGuid(guid);
-      if (!project) return { success: false, message: "project not found" };
+      const project = await this.repository.getByGuid(guid);
+      if (!project) return { success: false, message: "Project not Found" };
 
       let data;
       if (userRole === "admin") {
-        data = await this.projectRepository.getProjectByGuidForAdmin(guid);
+        data = await this.repository.getByGuidForAdmin(guid);
       } else {
-        data = await this.projectRepository.getProjectByGuidForUser(guid, userId);
+        data = await this.repository.getByGuidForUser(guid, userId);
       }
 
       return data;
     } catch (error) {
-      throw new Error(`Error fetching users: ${error.message}`);
+      throw new Error(`Error Get Project by Guid In Service Layer: ${error.message}`);
     }
   };
 
   getProjectTopic = async (projectId) => {
-    const project = await this.projectRepository.getTopicProject(projectId);
+    const project = await this.repository.getTopicProject(projectId);
     return project;
   };
 
-  getProjectList = async (userRole, deviceUserId, size, page) => {
+  getList = async (userRole, deviceUserId, size, page) => {
     try {
       const limit = size ? parseInt(size) : 10;
       const offset = page ? (parseInt(page) - 1) * limit : 0;
 
       let data, totalData;
       if (userRole === "admin") {
-        totalData = await this.projectRepository.countDataAdmin();
+        totalData = await this.repository.countDataAdmin();
 
-        data = await this.projectRepository.getProjectListForAdmin(limit, offset);
+        data = await this.repository.getListForAdmin(limit, offset);
       } else {
-        totalData = await this.projectRepository.countDataAdmin();
-        data = await this.projectRepository.getProjectListForUser(deviceUserId, limit, offset);
+        totalData = await this.repository.countDataAdmin();
+        data = await this.repository.getListForUser(deviceUserId, limit, offset);
       }
 
       return {
@@ -50,9 +50,9 @@ class ProjectService {
         data,
       };
     } catch (error) {
-      throw new Error(`Error Fetching Project: ${error.message}`);
+      throw new Error(`Error Get All Project In Service Layer: ${error.message}`);
     }
   };
 }
 
-module.exports = new ProjectService(projectRepository);
+module.exports = new ProjectService(repository);

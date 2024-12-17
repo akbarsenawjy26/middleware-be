@@ -27,14 +27,12 @@ const adminRole = async (req, res, next) => {
 
 const checkApiKey = async (req, res, next) => {
   const apiKey = req.headers["api-key"];
-  console.log("Api Key Request:", apiKey);
 
   if (!apiKey) {
     return res.status(400).json({ message: "Bad Request: API Key is required" });
   }
 
   const result = await apiKeyService.checkApiKey(apiKey);
-  console.log(result.status);
 
   if (result.status !== "active") {
     return res.status(400).json(responseHelper.fail(null, "Your Api Key Invalid"));

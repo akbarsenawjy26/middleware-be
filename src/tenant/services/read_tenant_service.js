@@ -1,6 +1,6 @@
-const repository = require("../../models/repository/api-key_repository");
+const repository = require("../../models/repository/tenant_repository");
 
-class ApiKeyService {
+class TenantService {
   constructor(repository) {
     this.repository = repository;
   }
@@ -11,13 +11,12 @@ class ApiKeyService {
       const offset = page ? (parseInt(page) - 1) * limit : 0;
 
       let data, totalData;
-
       if (userRole === "admin") {
         totalData = await this.repository.countDataAdmin();
         data = await this.repository.getListForAdmin(limit, offset);
       } else {
-        totalData = await this.repository.countDataUser(deviceUserId);
-        data = await this.repository.getListForUser(deviceUserId, limit, offset);
+        totalData = await this.repository.countDataUser();
+        data = await this.repository.getListForAdmin(deviceUserId, limit, offset);
       }
 
       return {
@@ -27,14 +26,14 @@ class ApiKeyService {
         data,
       };
     } catch (error) {
-      throw new Error(`Error Get API Key In Service Layer: ${error.message}`);
+      throw new Error(`Error Fetching Tenants: ${error.message}`);
     }
   };
 
   getByGuid = async (guid, userRole, userId) => {
     try {
-      const apiKey = await this.repository.getByGuid(guid);
-      if (!apiKey) return { success: false, message: "api key not found" };
+      const tenant = await this.repository.getByGuid(guid);
+      if (!tenant) return { success: false, message: "Tenant not Found" };
 
       let data;
       if (userRole === "admin") {
@@ -45,9 +44,9 @@ class ApiKeyService {
 
       return data;
     } catch (error) {
-      throw new Error(`Error Get Api Key By guid In Service Layer: ${error.message}`);
+      throw new Error(`Error fetching Tenant: ${error.message}`);
     }
   };
 }
 
-module.exports = new ApiKeyService(repository);
+module.exports = new TenantService(repository);
