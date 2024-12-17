@@ -3,10 +3,10 @@ const router = express.Router();
 const deviceController = require("../controller/device_controller");
 const middlewareUtils = require("../../../utils/middleware_utils");
 
-router.get("/", middlewareUtils.verifySession, deviceController.getDeviceList);
-router.get("/:guid", middlewareUtils.verifySession, deviceController.getDeviceByGuid);
-router.post("/", middlewareUtils.verifySession, deviceController.createDevice);
-router.delete("/:guid", middlewareUtils.verifySession, deviceController.deleteDevice);
-router.put("/:guid", middlewareUtils.verifySession, deviceController.updateDevice);
+router.get("/", middlewareUtils.verifySession, deviceController.getListController);
+router.get("/:guid", middlewareUtils.verifySession, deviceController.getByGuidController);
+router.post("/", middlewareUtils.verifySession, deviceController.createController);
+router.delete("/:guid", middlewareUtils.verifySession, deviceController.deleteController);
+router.put("/:guid", middlewareUtils.verifySession, deviceController.updateController);
 
 module.exports = router;

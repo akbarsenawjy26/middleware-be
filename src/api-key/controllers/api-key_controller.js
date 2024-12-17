@@ -1,67 +1,72 @@
-const serviceCreateApiKey = require("../services/create_api-key_service");
-const serviceUpdateApiKey = require("../services/update_api-key_service");
-const serviceGetApiKey = require("../services/read_api-key_service");
-const serviceDeleteApiKey = require("../services/delete_api-key_service");
+const serviceCreate = require("../services/create_api-key_service");
+const serviceUpdate = require("../services/update_api-key_service");
+const serviceGet = require("../services/read_api-key_service");
+const serviceDelete = require("../services/delete_api-key_service");
 const responseHelper = require("../../../utils/response_utils");
 
 class ApiKeyController {
-  getApiKeyList = async (req, res) => {
+  constructor(serviceCreate, serviceDelete, serviceGet, serviceUpdate) {
+    this.serviceCreate = serviceCreate;
+    this.serviceDelete = serviceDelete;
+    this.serviceGet = serviceGet;
+    this.serviceUpdate = serviceUpdate;
+  }
+
+  getListController = async (req, res) => {
     const { size, page } = req.query;
     try {
-      const data = await serviceGetApiKey.getApiKeyList(req.userRole, req.deviceUserId, size, page);
-      res.status(200).json(responseHelper.success(data, "Success get All data"));
+      const data = await this.serviceGet.getList(req.userRole, req.deviceUserId, size, page);
+      res.status(200).json(responseHelper.success(data, "Success Get All Api Key"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  getApiKeyByGuid = async (req, res) => {
+  getByGuidController = async (req, res) => {
     const { guid } = req.params;
 
     try {
-      const data = await serviceGetApiKey.getApiKeyByGuid(guid, req.userRole, req.deviceUserId);
-      res.status(200).json(responseHelper.success(data, "Success get All data"));
+      const data = await this.serviceGet.getByGuid(guid, req.userRole, req.deviceUserId);
+      res.status(200).json(responseHelper.success(data, `Success Get Api Key By Guid ${guid}`));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  createApiKey = async (req, res) => {
+  createController = async (req, res) => {
     const { expires_date, note, projectId } = req.body;
     try {
-      console.log("Expires Date:", expires_date);
-      console.log("Note:", note);
-      console.log("ProjectId:", projectId);
-      const data = await serviceCreateApiKey.createApiKey(req.userId, req.deviceUserId, expires_date, note, projectId);
+      const data = await this.serviceCreate.create(req.userId, req.deviceUserId, expires_date, note, projectId);
 
-      res.status(201).json(responseHelper.success(data, "Success create apikey"));
+      res.status(201).json(responseHelper.success(data, "Success Create Api Key"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  updateApiKey = async (req, res) => {
+  updateController = async (req, res) => {
     const { guid } = req.params;
-    const { expires_date, note } = req.body;
+    const { expires_date, note, projectId } = req.body;
 
     try {
       if (note !== null) {
-        const data = await serviceUpdateApiKey.updateApiKey(guid, note, expires_date, req.userRole, req.deviceUserId);
-        res.status(200).json(responseHelper.success(data, "success update data"));
+        const data = await this.serviceUpdate.update(guid, note, expires_date, req.userRole, projectId, req.deviceUserId);
+        res.status(200).json(responseHelper.success(data, "Success Update Api Key"));
       }
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }
   };
 
-  deleteApiKey = async (req, res) => {
+  deleteController = async (req, res) => {
     const { guid } = req.params;
     try {
-      const data = await serviceDeleteApiKey.deleteApiKey(guid, req.userRole, req.deviceUserId);
-      if (data.message === "device not found") {
+      const data = await this.serviceDelete.delete(guid, req.userRole, req.deviceUserId);
+
+      if (data.message === "Api Key Not Found") {
         return res.status(400).json(responseHelper.fail(null, data.message));
       }
-      if (data.message === "access denied") {
+      if (data.message === "Access Denied") {
         return res.status(403).json(responseHelper.fail(null, data.message));
       }
 
@@ -72,4 +77,4 @@ class ApiKeyController {
   };
 }
 
-module.exports = new ApiKeyController();
+module.exports = new ApiKeyController(serviceCreate, serviceDelete, serviceGet, serviceUpdate);

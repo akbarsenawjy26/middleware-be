@@ -1,137 +1,174 @@
-const { where } = require("sequelize");
-const projectModels = require("../../models/project_models");
-const userModel = require("../../models/user_models");
+const { projects, users, tenants } = require("../../../models");
+const { Op } = require("sequelize");
 
 class ProjectRepository {
-  constructor(projectModels) {
-    this.projectModels = projectModels;
+  constructor(projects, users, tenants) {
+    this.projects = projects;
+    this.users = users;
+    this.tenants = tenants;
   }
 
-  createProject = async (vendor, version, project_name, identity, deviceUserId) => {
-    return await projectModels.create({
+  create = async (deviceUserId, vendor, version, project_name, identity, tenantId) => {
+    return await projects.create({
       vendor: vendor,
       version: version,
       project_name: project_name,
       identity: identity,
       userId: deviceUserId,
+      tenantId: tenantId,
     });
   };
 
-  getProjectListForAdmin = async (limit, offset) => {
-    return await projectModels.findAll({
+  getListForAdmin = async (limit, offset) => {
+    return await projects.findAll({
       limit,
       offset,
+      where: { status: "active" },
       attributes: ["id", "guid", "vendor", "version", "project_name", "identity", "topic"],
       include: [
         {
-          model: userModel,
+          model: this.users,
           attributes: ["name", "email"],
+        },
+        {
+          model: this.tenants,
+          attributes: ["id", "name_tenant"],
         },
       ],
     });
   };
 
-  getProjectListForUser = async (deviceUserId, limit, offset) => {
-    return await projectModels.findAll({
+  getListForUser = async (deviceUserId, limit, offset) => {
+    return await projects.findAll({
       limit,
       offset,
       attributes: ["id", "guid", "vendor", "version", "project_name", "identity", "topic"],
       where: {
-        userId: deviceUserId,
+        [Op.and]: [{ userId: deviceUserId }, { status: "active" }],
       },
       include: [
         {
-          model: userModel,
+          model: this.users,
           attributes: ["name", "email"],
         },
-      ],
-    });
-  };
-
-  getProjectByGuid = async (guid) => {
-    return await projectModels.findOne({ where: { guid } });
-  };
-
-  getProjectByGuidForAdmin = async (guid) => {
-    return await projectModels.findOne({
-      where: { guid: guid },
-      attributes: ["guid", "vendor", "version", "project_name", "identity"],
-      include: [
         {
-          model: userModel,
-          attributes: ["name", "email"],
+          model: this.tenants,
+          attributes: ["id", "name_tenant"],
         },
       ],
     });
   };
 
-  getProjectByGuidForUser = async (guid, userId) => {
-    return await projectModels.findAll({
-      attributes: ["guid", "vendor", "version", "project_name", "identity"],
+  getByGuid = async (guid) => {
+    return await projects.findOne({
       where: {
-        [Op.and]: [{ guid: guid }, { userId: userId }],
+        [Op.and]: [{ guid: guid }, { status: "active" }],
       },
+    });
+  };
+
+  getByGuidForAdmin = async (guid) => {
+    return await projects.findOne({
+      where: { guid, status: "active" },
+      attributes: ["guid", "vendor", "version", "project_name", "identity", "tenantId"],
       include: [
         {
-          model: userModel,
+          model: this.users,
           attributes: ["name", "email"],
+        },
+        {
+          model: this.tenants,
+          attributes: ["id", "name_tenant"],
         },
       ],
     });
   };
 
-  deleteProjectForAdmin = async (guid) => {
-    return await projectModels.destroy({ where: { guid } });
+  getByGuidForUser = async (guid, userId) => {
+    return await projects.findAll({
+      attributes: ["guid", "vendor", "version", "project_name", "identity", "tenantId"],
+      where: {
+        [Op.and]: [{ guid: guid }, { userId: userId }, { status: "active" }],
+      },
+      include: [
+        {
+          model: this.users,
+          attributes: ["name", "email"],
+        },
+        {
+          model: this.tenants,
+          attributes: ["id", "name_tenant"],
+        },
+      ],
+    });
   };
 
-  deleteProjectForUser = async (guid, deviceUserId) => {
-    return await projectModels.destroy({ where: { [Op.and]: [{ guid: guid }, { userId: deviceUserId }] } });
+  deleteForAdmin = async (guid) => {
+    return await projects.update(
+      {
+        status: "inactive",
+      },
+      {
+        where: { guid },
+      }
+    );
   };
 
-  updateProjectForAdmin = async (guid, vendor, version, project_name, identity) => {
-    return await projectModels.update(
+  deleteForUser = async (guid, deviceUserId) => {
+    return await projects.update(
+      {
+        status: "inactive",
+      },
+      {
+        where: { where: { [Op.and]: [{ guid: guid }, { userId: deviceUserId }] } },
+      }
+    );
+  };
+
+  updateForAdmin = async (guid, vendor, version, project_name, identity, tenantId) => {
+    return await projects.update(
       {
         vendor: vendor,
         version: version,
         project_name: project_name,
         identity: identity,
+        tenantId: tenantId,
       },
       { where: { guid } }
     );
   };
 
-  updateProjectForUser = async (guid, userId, vendor, version, project_name, identity) => {
-    return await projectModels.update(
+  updateForUser = async (guid, userId, vendor, version, project_name, identity, tenantId) => {
+    return await projects.update(
       {
         vendor: vendor,
         version: version,
         project_name: project_name,
         identity: identity,
+        tenantId: tenantId,
       },
       { where: { [Op.and]: [{ guid: guid }, { userId: userId }] } }
     );
   };
 
   getTopicProject = async (projectId) => {
-    return await projectModels.findOne(
-      {
-        attributes: ["status", "topic"],
-      },
-      {
-        where: { projectId: projectId },
-      }
-    );
+    return await projects.findOne({
+      where: { id: projectId },
+      attributes: ["status", "topic"],
+    });
   };
 
   countDataAdmin = async () => {
-    return await projectModels.count();
+    return await projects.count({
+      where: { status: "active" },
+    });
   };
 
   countDataUser = async (deviceUserId) => {
-    return await projectModels.count({
-      where: { deviceUserId },
+    return await projects.count({
+      where: { [Op.and]: [{ deviceUserId }, { status: "active" }] },
     });
   };
 }
 
-module.exports = new ProjectRepository(projectModels);
+module.exports = new ProjectRepository(projects, users, tenants);

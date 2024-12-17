@@ -25,6 +25,8 @@ const deviceRoutes = require("./device/routes/device_routes");
 const apiKeyRoutes = require("./api-key/routes/api-key_routes");
 const dashboardRoutes = require("./dashboard/routes/dashboard_routes");
 const projectRoutes = require("./project/routes/project_routes");
+const tenantRoutes = require("./tenant/routes/tenant_routes");
+const typeRoutes = require("./type/routes/routes_type");
 
 // (async () => {
 //   await db.sync({ alter: true });
@@ -59,6 +61,8 @@ app.use("/api/v1/device", deviceRoutes);
 app.use("/api/v1/api-key", apiKeyRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/project", projectRoutes);
+app.use("/api/v1/tenant", tenantRoutes);
+app.use("/api/v1/type", typeRoutes);
 
 app.listen(3001, "0.0.0.0", () => {
   console.log("Middleware App Running");
