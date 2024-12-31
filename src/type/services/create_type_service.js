@@ -5,9 +5,9 @@ class TypeService {
     this.repository = repository;
   }
 
-  create = async (deviceUserId, name_type) => {
+  create = async (deviceUserId, name_type, group) => {
     try {
-      const data = await this.repository.create(deviceUserId, name_type);
+      const data = await this.repository.create(deviceUserId, name_type, group);
 
       return data;
     } catch (error) {

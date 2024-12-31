@@ -28,6 +28,11 @@ class ProjectService {
     return project;
   };
 
+  getListProjectTopic = async () => {
+    const projectList = await this.repository.getListTopicProject();
+    return projectList;
+  };
+
   getList = async (userRole, deviceUserId, size, page) => {
     try {
       const limit = size ? parseInt(size) : 10;

@@ -1,5 +1,5 @@
 const { types, users } = require("../../../models");
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 
 class TypeRepository {
   constructor(types, users) {
@@ -7,10 +7,11 @@ class TypeRepository {
     this.users = users;
   }
 
-  create = async (deviceUserId, name_type) => {
+  create = async (deviceUserId, name_type, group) => {
     return await types.create({
       name_type: name_type,
       userId: deviceUserId,
+      filter: group,
     });
   };
 
@@ -22,10 +23,18 @@ class TypeRepository {
     });
   };
 
+  getById = async (id) => {
+    return await types.findOne({
+      where: {
+        [Op.and]: [{ id: id }, { status: "active" }],
+      },
+    });
+  };
+
   getByGuidForAdmin = async (guid) => {
     return await types.findOne({
       where: { guid, status: "active" },
-      attributes: ["id", "guid", "name_type", "userId"],
+      attributes: ["id", "guid", "name_type", "userId", "filter"],
       include: [
         {
           model: this.users,
@@ -41,7 +50,7 @@ class TypeRepository {
       where: {
         [Op.and]: [{ guid }, { userId }, { status: "active" }],
       },
-      attributes: ["id", "guid", "name_type", "userId"],
+      attributes: ["id", "guid", "name_type", "userId", filter],
       include: [
         {
           model: this.users,
@@ -57,7 +66,7 @@ class TypeRepository {
       limit,
       offset,
       where: { status: "active" },
-      attributes: ["id", "guid", "name_type", "userId"],
+      attributes: ["id", "guid", "name_type", "userId", "filter"],
       include: [
         {
           model: this.users,
@@ -75,7 +84,7 @@ class TypeRepository {
       where: {
         [Op.and]: [{ userId: deviceUserId }, { status: "active" }],
       },
-      attributes: ["id", "guid", "name_type", "userId"],
+      attributes: ["id", "guid", "name_type", "userId", "filter"],
       include: [
         {
           model: this.users,
@@ -84,6 +93,10 @@ class TypeRepository {
         },
       ],
     });
+  };
+
+  deleteByUserId = async (userId) => {
+    return types.update({ status: "inactive" }, { where: { userId: userId } });
   };
 
   deleteForAdmin = async (guid) => {
@@ -108,10 +121,11 @@ class TypeRepository {
     );
   };
 
-  updateForAdmin = async (guid, name_type) => {
+  updateForAdmin = async (guid, name_type, group) => {
     return await types.update(
       {
         name_type: name_type,
+        filter: group,
       },
       {
         where: { guid: guid },
@@ -119,10 +133,11 @@ class TypeRepository {
     );
   };
 
-  updateForUser = async (userId, guid, name_type) => {
+  updateForUser = async (userId, guid, name_type, group) => {
     return await types.update(
       {
         name_type: name_type,
+        filter: group,
       },
       {
         where: { [Op.and]: [{ guid }, { userId }] },

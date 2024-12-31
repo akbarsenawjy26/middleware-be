@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       device_sn: DataTypes.STRING,
       device_name: DataTypes.STRING,
       device_location: DataTypes.STRING,
+      filter: DataTypes.JSON,
       status: DataTypes.STRING,
       userId: DataTypes.INTEGER,
       tenantId: DataTypes.INTEGER,

@@ -47,10 +47,10 @@ class ProjectController {
 
   updateController = async (req, res) => {
     const { guid } = req.params;
-    const { vendor, version, project_name, identity, tenantId } = req.body;
+    const { vendor, version, project_name, identity, tenantId, topic } = req.body;
 
     try {
-      const data = await this.serviceUpdate.update(guid, vendor, version, project_name, identity, tenantId, req.userRole, req.deviceUserId);
+      const data = await this.serviceUpdate.update(guid, vendor, version, project_name, identity, tenantId, req.userRole, req.deviceUserId, topic);
       res.status(200).json(responseHelper.success(data, "success update data"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
@@ -76,8 +76,16 @@ class ProjectController {
 
   getTopicController = async (req, res) => {
     try {
-      console.log("ProjectId:", req.projectId);
       const data = await this.serviceGet.getProjectTopic(req.projectId);
+      res.status(200).json(responseHelper.success(data));
+    } catch (error) {
+      res.status(500).json(responseHelper.error(error.message));
+    }
+  };
+
+  getListTopicController = async (req, res) => {
+    try {
+      const data = await this.serviceGet.getListProjectTopic();
       res.status(200).json(responseHelper.success(data));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));

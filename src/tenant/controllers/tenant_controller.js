@@ -3,6 +3,7 @@ const createService = require("../services/create_tenant_service");
 const readService = require("../services/read_tenant_service");
 const updateService = require("../services/update_tenant_service");
 const deleteService = require("../services/delete_tenant_service");
+const { response } = require("express");
 
 class TenantController {
   constructor(createService, readService, updateService, deleteService) {
@@ -13,9 +14,9 @@ class TenantController {
   }
 
   createController = async (req, res) => {
-    const { name_tenant } = req.body;
+    const { name_tenant, alias } = req.body;
     try {
-      const data = await this.createService.create(req.deviceUserId, name_tenant);
+      const data = await this.createService.create(req.deviceUserId, name_tenant, alias);
       res.status(201).json(responseHelper.success(data, "Success Create New Tenant"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
@@ -46,11 +47,16 @@ class TenantController {
 
   updateController = async (req, res) => {
     const { guid } = req.params;
-    const { name_tenant } = req.body;
+    const { name_tenant, alias } = req.body;
 
     try {
-      const data = await this.updateService.update(req.deviceUserId, req.userRole, guid, name_tenant);
-      res.status(200).json(responseHelper.success(data, "Success Update Tenant"));
+      let result;
+      const data = await this.updateService.update(req.deviceUserId, req.userRole, guid, name_tenant, alias);
+      if (data.status === "success") {
+        result = await this.readService.getByGuid(guid, req.userRole, req.deviceUserId);
+      }
+
+      res.status(200).json(responseHelper.success(result, "Success Update Tenant"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
     }

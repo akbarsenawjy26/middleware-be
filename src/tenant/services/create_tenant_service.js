@@ -5,9 +5,9 @@ class TenantService {
     this.repository = repository;
   }
 
-  create = async (deviceUserId, name_tenant) => {
+  create = async (deviceUserId, name_tenant, alias) => {
     try {
-      const data = await this.repository.create(deviceUserId, name_tenant);
+      const data = await this.repository.create(deviceUserId, name_tenant, alias);
 
       return data;
     } catch (error) {

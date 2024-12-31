@@ -11,12 +11,12 @@ class DeviceService {
 
       let data;
       if (userRole === "admin") {
-        data = await this.repository.deleteForAdmin(guid);
+        data = await this.repository.deleteForAdmin(device.guid);
       } else {
         if (deviceUserId !== device.userId) {
           return { success: false, message: "Access Denied" };
         }
-        data = await this.repository.deleteForUser(guid, deviceUserId);
+        data = await this.repository.deleteForUser(device.guid, deviceUserId);
       }
 
       return data;

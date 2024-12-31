@@ -4,9 +4,9 @@ class DeviceService {
   constructor(repository) {
     this.repository = repository;
   }
-  create = async (device_sn, device_name, device_location, projectId, deviceUserId, tenantId, typeId) => {
+  create = async (device_sn, device_name, device_location, projectId, deviceUserId, tenantId, typeId, group) => {
     try {
-      const data = await this.repository.create(device_sn, device_name, device_location, projectId, deviceUserId, tenantId, typeId);
+      const data = await this.repository.create(device_sn, device_name, device_location, projectId, deviceUserId, tenantId, typeId, group);
 
       return data;
     } catch (error) {

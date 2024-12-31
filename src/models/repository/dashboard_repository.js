@@ -1,35 +1,30 @@
-const userModels = require("../../models/user_models");
-const deviceModels = require("../../models/device_models");
-const apikeyeModels = require("../../models/api-key_models");
-
-const { users, devices, apikeys } = require("../../../models");
-const { where } = require("sequelize");
+const { projects, devices, apikeys } = require("../../../models");
 
 class DashboardRepository {
-  constructor(users, devices, apikeys) {
-    this.users = users;
+  constructor(projects, devices, apikeys) {
+    this.projects = projects;
     this.devices = devices;
     this.apikeys = apikeys;
   }
 
-  userCounterForAdmin = async () => {
-    return await users.count({ where: { status: "active" } });
+  projectCounterForAdmin = async () => {
+    return this.projects.count({ where: { status: "active" } });
   };
 
   deviceCounterForAdmin = async () => {
-    return await devices.count({ where: { status: "active" } });
+    return await this.devices.count({ where: { status: "active" } });
   };
 
   apiKeyCounterForAdmin = async () => {
-    return await apikeys.count({ where: { status: "active" } });
+    return await this.apikeys.count({ where: { status: "active" } });
   };
 
-  userCounterForUser = async () => {
+  projectCounterForUser = async () => {
     return 0;
   };
 
   deviceCounterForUser = async (deviceUserId) => {
-    return await deviceModels.count({
+    return await this.devices.count({
       where: {
         [Op.and]: [{ userId: deviceUserId }, { status: "active" }],
       },
@@ -37,7 +32,7 @@ class DashboardRepository {
   };
 
   apiKeyCounterForUser = async (deviceUserId) => {
-    return await apikeyeModels.count({
+    return await this.apikeys.count({
       where: {
         [Op.and]: [{ userId: deviceUserId }, { status: "active" }],
       },
@@ -45,4 +40,4 @@ class DashboardRepository {
   };
 }
 
-module.exports = new DashboardRepository(users, devices, apikeys);
+module.exports = new DashboardRepository(projects, devices, apikeys);

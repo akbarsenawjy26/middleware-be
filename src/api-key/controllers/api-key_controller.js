@@ -33,6 +33,18 @@ class ApiKeyController {
     }
   };
 
+  getByIdController = async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+
+    try {
+      const data = await this.serviceGet.getById(id, req.userRole, req.deviceUserId);
+      res.status(200).json(responseHelper.success(data, `Success Get Api Key By Id ${id}`));
+    } catch (error) {
+      res.status(500).json(responseHelper.error(error.message));
+    }
+  };
+
   createController = async (req, res) => {
     const { expires_date, note, projectId } = req.body;
     try {

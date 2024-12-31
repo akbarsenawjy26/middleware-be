@@ -6,6 +6,7 @@ const typeController = require("../controllers/type_controller");
 router.post("/", middlewareUtils.verifySession, typeController.createController);
 router.get("/", middlewareUtils.verifySession, typeController.getListController);
 router.get("/:guid", middlewareUtils.verifySession, typeController.getByGuidController);
+router.get("/getid/:id", middlewareUtils.verifySession, typeController.getByIdController);
 router.put("/:guid", middlewareUtils.verifySession, typeController.updateController);
 router.delete("/:guid", middlewareUtils.verifySession, typeController.deleteController);
 

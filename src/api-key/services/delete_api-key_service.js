@@ -12,12 +12,12 @@ class ApiKeyService {
 
       let data;
       if (userRole === "admin") {
-        data = await this.repository.deleteForAdmin(guid);
+        data = await this.repository.deleteForAdmin(apikey.guid);
       } else {
         if (deviceUserId !== apikey.userId) {
           return { success: false, message: "Access Denied" };
         }
-        data = await this.repository.deleteForUser(guid, deviceUserId);
+        data = await this.repository.deleteForUser(apikey.guid, deviceUserId);
       }
       return data;
     } catch (error) {
