@@ -1,8 +1,12 @@
 model_name = 
+migration_name = 
 model_attributes = 
-model_path =
+model_path = 
 seed_name =
 seed_path =
+
+migration_status:
+	npx sequelize-cli db:migrate:status
 
 #MODEL
 generate-model:
@@ -10,6 +14,9 @@ generate-model:
 	npx sequelize-cli model:generate --name $(model_name) --attributes $(model_attributes)
 
 #MIGRATION
+generate-migration:
+	npx sequelize-cli migration:generate --name $(migration_name)
+	
 migration:
 	@echo "Migrating All Models"
 	npx sequelize-cli db:migrate
