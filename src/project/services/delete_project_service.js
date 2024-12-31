@@ -1,8 +1,12 @@
 const repository = require("../../models/repository/project_repository");
+const deviceRepository = require("../../models/repository/device_repository");
+const apikeysRepository = require("../../models/repository/api-key_repository");
 
 class ProjectService {
-  constructor(repository) {
+  constructor(repository, deviceRepository, apikeysRepository) {
     this.repository = repository;
+    this.deviceRepository = deviceRepository;
+    this.apikeysRepository = apikeysRepository;
   }
 
   delete = async (guid, userRole, deviceUserId) => {
@@ -20,6 +24,9 @@ class ProjectService {
         data = await this.repository.deleteForUser(guid, deviceUserId);
       }
 
+      await deviceRepository.deleteByProjectId(project.id);
+      await apikeysRepository.deleteByProjectId(project.id);
+
       return data;
     } catch (error) {
       throw new Error(`Error Delete Project In Service Layer: ${error.message}`);
@@ -27,4 +34,4 @@ class ProjectService {
   };
 }
 
-module.exports = new ProjectService(repository);
+module.exports = new ProjectService(repository, deviceRepository, apikeysRepository);

@@ -30,7 +30,7 @@ db.Tenant = require("./tenants.js")(sequelize, Sequelize.DataTypes);
 db.Device = require("./devices.js")(sequelize, Sequelize.DataTypes);
 db.User = require("./users.js")(sequelize, Sequelize.DataTypes);
 db.Project = require("./projects.js")(sequelize, Sequelize.DataTypes);
-db.Apikey = require("./apikeys.js")(sequelize, Sequelize.DataTypes);
+db.Apikey = require("./apikeys.js")(sequelize, Sequelize.DataTypes, Sequelize.Op);
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {

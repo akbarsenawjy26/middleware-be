@@ -13,9 +13,9 @@ class TypeController {
   }
 
   createController = async (req, res) => {
-    const { name_type } = req.body;
+    const { name_type, group } = req.body;
     try {
-      const data = await this.createService.create(req.deviceUserId, name_type);
+      const data = await this.createService.create(req.deviceUserId, name_type, group);
       res.status(201).json(responseHelper.success(data, "Success Create New Type"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
@@ -44,12 +44,24 @@ class TypeController {
     }
   };
 
+  getByIdController = async (req, res) => {
+    const { id } = req.params;
+
+    console.log("Id:", id);
+    try {
+      const data = await this.readService.getById(id);
+      res.status(200).json(responseHelper.success(data, `Success Get Type by Id`));
+    } catch (error) {
+      res.status(500).json(responseHelper.error(error.message));
+    }
+  };
+
   updateController = async (req, res) => {
     const { guid } = req.params;
-    const { name_type } = req.body;
+    const { name_type, group } = req.body;
 
     try {
-      const data = await this.updateService.update(req.deviceUserId, req.userRole, guid, name_type);
+      const data = await this.updateService.update(req.deviceUserId, req.userRole, guid, name_type, group);
       res.status(200).json(responseHelper.success(data, "Success Update Type"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));

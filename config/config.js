@@ -9,7 +9,8 @@ module.exports = {
     password: process.env.DB_PASSWORD, // Pastikan konsisten penulisan nama variabel
     database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT, // Perbaiki penulisan dari DB_DILECT menjadi DB_DIALECT
+    dialect: process.env.DB_DIALECT,
+    logging: false, // Perbaiki penulisan dari DB_DILECT menjadi DB_DIALECT
   },
   test: {
     username: "root",

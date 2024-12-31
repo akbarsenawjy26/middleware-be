@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       guid: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4 },
       name_type: DataTypes.STRING,
       status: DataTypes.STRING,
+      filter: DataTypes.JSON,
       userId: DataTypes.INTEGER,
       createdBy: DataTypes.STRING,
       updatedBy: DataTypes.STRING,

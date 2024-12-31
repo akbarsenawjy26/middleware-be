@@ -5,16 +5,16 @@ class TypeService {
     this.repository = repository;
   }
 
-  update = async (userId, userRole, guid, name_type) => {
+  update = async (userId, userRole, guid, name_type, group) => {
     try {
       const tenant = await this.repository.getByGuid(guid);
       if (!tenant) return { success: false, message: "Type Not Found" };
 
       let data;
       if (userRole === "admin") {
-        data = await this.repository.updateForAdmin(guid, name_type);
+        data = await this.repository.updateForAdmin(guid, name_type, group);
       } else {
-        data = await this.repository.updateForUser(userId, guid, name_type);
+        data = await this.repository.updateForUser(userId, guid, name_type, group);
       }
 
       return data;

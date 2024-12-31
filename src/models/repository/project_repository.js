@@ -70,7 +70,7 @@ class ProjectRepository {
   getByGuidForAdmin = async (guid) => {
     return await projects.findOne({
       where: { guid, status: "active" },
-      attributes: ["guid", "vendor", "version", "project_name", "identity", "tenantId"],
+      attributes: ["id", "guid", "vendor", "version", "project_name", "identity", "tenantId", "createdAt", "updatedAt", "topic"],
       include: [
         {
           model: this.users,
@@ -78,7 +78,7 @@ class ProjectRepository {
         },
         {
           model: this.tenants,
-          attributes: ["id", "name_tenant"],
+          attributes: ["id", "name_tenant", "alias"],
         },
       ],
     });
@@ -86,7 +86,7 @@ class ProjectRepository {
 
   getByGuidForUser = async (guid, userId) => {
     return await projects.findAll({
-      attributes: ["guid", "vendor", "version", "project_name", "identity", "tenantId"],
+      attributes: ["id", "guid", "vendor", "version", "project_name", "identity", "tenantId", "createdAt", "updatedAt"],
       where: {
         [Op.and]: [{ guid: guid }, { userId: userId }, { status: "active" }],
       },
@@ -97,10 +97,18 @@ class ProjectRepository {
         },
         {
           model: this.tenants,
-          attributes: ["id", "name_tenant"],
+          attributes: ["id", "name_tenant", "alias"],
         },
       ],
     });
+  };
+
+  deleteByTenantId = async (tenantId) => {
+    return await projects.update({ status: "inactive" }, { where: { tenantId: tenantId } });
+  };
+
+  deleteByUserId = async (userId) => {
+    return projects.update({ status: "inactive" }, { where: { userId: userId } });
   };
 
   deleteForAdmin = async (guid) => {
@@ -125,7 +133,7 @@ class ProjectRepository {
     );
   };
 
-  updateForAdmin = async (guid, vendor, version, project_name, identity, tenantId) => {
+  updateForAdmin = async (guid, vendor, version, project_name, identity, tenantId, topic) => {
     return await projects.update(
       {
         vendor: vendor,
@@ -133,12 +141,13 @@ class ProjectRepository {
         project_name: project_name,
         identity: identity,
         tenantId: tenantId,
+        topic,
       },
       { where: { guid } }
     );
   };
 
-  updateForUser = async (guid, userId, vendor, version, project_name, identity, tenantId) => {
+  updateForUser = async (guid, userId, vendor, version, project_name, identity, tenantId, topic) => {
     return await projects.update(
       {
         vendor: vendor,
@@ -155,6 +164,13 @@ class ProjectRepository {
     return await projects.findOne({
       where: { id: projectId },
       attributes: ["status", "topic"],
+    });
+  };
+
+  getListTopicProject = async () => {
+    return await projects.findAll({
+      where: { status: "active" },
+      attributes: ["topic"],
     });
   };
 

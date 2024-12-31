@@ -1,5 +1,5 @@
 const { apikeys, users, projects } = require("../../../models");
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 
 class ApiKeyRepository {
   constructor(apikeys, users, projects) {
@@ -59,7 +59,11 @@ class ApiKeyRepository {
   };
 
   getByGuid = async (guid) => {
-    return await apikeys.findOne({ [Op.and]: [{ guid: guid }, { status: "active" }] });
+    return await apikeys.findOne({ where: { [Op.and]: [{ guid: guid }, { status: "active" }] } });
+  };
+
+  getById = async (id) => {
+    return await apikeys.findAll({ where: { [Op.and]: [{ projectId: id }, { status: "active" }] }, attributes: ["api_key", "expires_at", "note"] });
   };
 
   getByGuidForAdmin = async (guid) => {
@@ -100,6 +104,10 @@ class ApiKeyRepository {
     });
   };
 
+  deleteByProjectId = async (projectId) => {
+    return await apikeys.update({ status: "inactive" }, { where: { projectId: projectId } });
+  };
+
   deleteForAdmin = async (guid) => {
     return await apikeys.update({ status: "inactive" }, { where: { guid: guid } });
   };
@@ -108,17 +116,17 @@ class ApiKeyRepository {
     return await apikeys.destroy({ status: "inactive" }, { where: { [Op.and]: [{ guid: guid }, { userId: deviceUserId }] } });
   };
 
-  updateForAdmin = async (guid, note, expiryDate, projetId) => {
-    return await apikeys.update({ note: note, expires_at: expiryDate, projetId: projetId }, { where: { guid } });
+  updateForAdmin = async (guid, note, expiryDate, projectId, transaction) => {
+    return await apikeys.update({ note: note, expires_at: expiryDate, projectId: projectId }, { where: { guid }, transaction });
   };
-  updateForUser = async (guid, note, expiryDate, projetId, userId) => {
+  updateForUser = async (guid, note, expiryDate, projetId, userId, transaction) => {
     return await apikeys.update(
       {
         note: note,
         expires_at: expiryDate,
         projetId: projetId,
       },
-      { where: { [Op.and]: [{ guid: guid }, { userId: userId }] } }
+      { where: { [Op.and]: [{ guid: guid }, { userId: userId }] }, returning: true, transaction }
     );
   };
 

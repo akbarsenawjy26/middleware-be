@@ -47,6 +47,16 @@ class TypeService {
       throw new Error(`Error Fetching Tenant: ${error.message}`);
     }
   };
+
+  getById = async (id) => {
+    try {
+      const data = await this.repository.getById(id);
+
+      return data;
+    } catch (error) {
+      throw new Error(`Error Fetching Tenant: ${error.message}`);
+    }
+  };
 }
 
 module.exports = new TypeService(repository);

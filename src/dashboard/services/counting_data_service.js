@@ -6,21 +6,21 @@ class DashboardService {
   }
 
   countingData = async (userRole, deviceUserId) => {
-    let userTotal, deviceTotal, apikeyTotal;
+    let projectTotal, deviceTotal, apikeyTotal;
 
     try {
       if (userRole === "admin") {
-        userTotal = await this.repository.userCounterForAdmin();
+        projectTotal = await this.repository.projectCounterForAdmin();
         deviceTotal = await this.repository.deviceCounterForAdmin();
         apikeyTotal = await this.repository.apiKeyCounterForAdmin();
       } else {
-        userTotal = await this.repository.userCounterForUser(deviceUserId);
+        projectTotal = await this.repository.projectCounterForUser(deviceUserId);
         deviceTotal = await this.repository.deviceCounterForUser(deviceUserId);
         apikeyTotal = await this.repository.apiKeyCounterForUser(deviceUserId);
       }
 
       return {
-        userTotal,
+        projectTotal,
         deviceTotal,
         apikeyTotal,
       };

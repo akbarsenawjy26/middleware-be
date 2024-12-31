@@ -12,9 +12,9 @@ class DeviceController {
     this.serviceDelete = serviceDelete;
   }
   createController = async (req, res) => {
-    const { device_sn, device_name, device_location, projectId, tenantId, typeId } = req.body;
+    const { device_sn, device_name, device_location, projectId, tenantId, typeId, group } = req.body;
     try {
-      const data = await this.serviceCreate.create(device_sn, device_name, device_location, projectId, req.deviceUserId, tenantId, typeId);
+      const data = await this.serviceCreate.create(device_sn, device_name, device_location, projectId, req.deviceUserId, tenantId, typeId, group);
       res.status(201).json(responseHelper.success(data, "Success Create new Device"));
     } catch (error) {
       res.status(500).json(responseHelper.error(error.message));
@@ -44,13 +44,25 @@ class DeviceController {
     }
   };
 
+  getByProjectIdController = async (req, res) => {
+    const { projectId } = req.params;
+    console.log("project ID:", projectId);
+    try {
+      const data = await this.serviceGet.getByProjectId(projectId);
+
+      res.status(200).json(responseHelper.success(data, `Success Get Device by ProjectId: ${projectId}`));
+    } catch (error) {
+      res.status(500).json(responseHelper.error(error.message));
+    }
+  };
+
   updateController = async (req, res) => {
     const { guid } = req.params;
-    const { device_sn, device_name, device_location, projectId, tenantId, typeId } = req.body;
+    const { device_sn, device_name, device_location, projectId, tenantId, typeId, group } = req.body;
 
     try {
       if (device_name !== null) {
-        const data = await this.serviceUpdate.update(guid, device_sn, device_name, device_location, projectId, req.userRole, req.deviceUserId, tenantId, typeId);
+        const data = await this.serviceUpdate.update(guid, device_sn, device_name, device_location, projectId, req.userRole, req.deviceUserId, tenantId, typeId, group);
         res.status(200).json(responseHelper.success(data, "Success Update Data"));
       }
     } catch (error) {

@@ -44,11 +44,11 @@ module.exports = (sequelize, DataTypes) => {
       hooks: {
         beforeCreate: (project, options) => {
           if (!project.topic) {
-            project.topic = `${project.vendor}/${project.version}/${project.identity}/#`;
+            project.topic = `iot-${project.guid.slice(0, 8)}/${project.vendor}/${project.version}/${project.identity}/#`;
           }
         },
         beforeUpdate: (project, options) => {
-          if (!project.topic) {
+          if (project.topic === null) {
             project.topic = `${project.vendor}/${project.version}/${project.identity}/#`;
           }
         },

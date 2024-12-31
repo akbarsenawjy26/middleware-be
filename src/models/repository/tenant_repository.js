@@ -7,10 +7,11 @@ class TenantRepository {
     this.users = users;
   }
 
-  create = async (deviceUserId, name_tenant) => {
+  create = async (deviceUserId, name_tenant, alias) => {
     return await tenants.create({
       name_tenant: name_tenant,
       userId: deviceUserId,
+      alias: alias,
     });
   };
 
@@ -21,7 +22,7 @@ class TenantRepository {
   getByGuidForAdmin = async (guid) => {
     return await tenants.findOne({
       where: { guid, status: "active" },
-      attributes: ["id", "guid", "name_tenant", "userId"],
+      attributes: ["id", "guid", "name_tenant", "userId", "alias"],
       include: [
         {
           model: this.users,
@@ -37,7 +38,7 @@ class TenantRepository {
       where: {
         [Op.and]: [{ guid }, { userId }, { status: "active" }],
       },
-      attributes: ["id", "guid", "name_tenant", "userId"],
+      attributes: ["id", "guid", "name_tenant", "userId", "alias"],
       include: [
         {
           model: this.users,
@@ -53,7 +54,7 @@ class TenantRepository {
       limit,
       offset,
       where: { status: "active" },
-      attributes: ["id", "guid", "name_tenant", "userId", "createdAt"],
+      attributes: ["id", "guid", "name_tenant", "userId", "createdAt", "alias"],
       include: [
         {
           model: this.users,
@@ -71,7 +72,7 @@ class TenantRepository {
       where: {
         [Op.and]: [{ userId: deviceUserId }, { status: "active" }],
       },
-      attributes: ["id", "guid", "name_tenant", "userId", "createdAt"],
+      attributes: ["id", "guid", "name_tenant", "userId", "createdAt", "alias"],
       include: [
         {
           model: this.users,
@@ -93,6 +94,10 @@ class TenantRepository {
     );
   };
 
+  deleteByUserId = async (userId) => {
+    return tenants.update({ status: "inactive" }, { where: { userId: userId } });
+  };
+
   deleteForUser = async (deviceUserId, guid) => {
     return await tenants.update(
       {
@@ -104,10 +109,11 @@ class TenantRepository {
     );
   };
 
-  updateForAdmin = async (guid, name_tenant) => {
+  updateForAdmin = async (guid, name_tenant, alias) => {
     return await tenants.update(
       {
         name_tenant: name_tenant,
+        alias: alias,
       },
       {
         where: { guid: guid },
@@ -115,10 +121,11 @@ class TenantRepository {
     );
   };
 
-  updateForUser = async (userId, guid, name_tenant) => {
+  updateForUser = async (userId, guid, name_tenant, alias) => {
     return await tenants.update(
       {
         name_tenant: name_tenant,
+        alias: alias,
       },
       {
         where: { [Op.and]: [{ guid }, { userId }] },

@@ -1,5 +1,5 @@
 const { devices, users, tenants, projects, types } = require("../../../models");
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 
 class DeviceRepository {
   constructor(devices, users, tenants, projects, types) {
@@ -10,7 +10,7 @@ class DeviceRepository {
     this.types = types;
   }
 
-  create = async (device_sn, device_name, device_location, projectId, deviceUserId, tenantId, typeId) => {
+  create = async (device_sn, device_name, device_location, projectId, deviceUserId, tenantId, typeId, group) => {
     return await devices.create({
       device_sn: device_sn,
       device_name: device_name,
@@ -19,6 +19,7 @@ class DeviceRepository {
       tenantId: tenantId,
       projectId: projectId,
       typeId: typeId,
+      filter: group,
     });
   };
 
@@ -30,12 +31,20 @@ class DeviceRepository {
     });
   };
 
+  getByProjectId = async (projectId) => {
+    return await devices.findAll({
+      where: {
+        [Op.and]: [{ projectId: projectId }, { status: "active" }],
+      },
+    });
+  };
+
   getByGuidForAdmin = async (guid) => {
     return await devices.findOne({
       where: {
         [Op.and]: [{ guid: guid }, { status: "active" }],
       },
-      attributes: ["guid", "device_sn", "device_name", "device_location", "projectId", "tenantId", "typeId"],
+      attributes: ["guid", "device_sn", "device_name", "device_location", "projectId", "tenantId", "typeId", "filter"],
       include: [
         {
           model: this.users,
@@ -43,11 +52,11 @@ class DeviceRepository {
         },
         {
           model: this.projects,
-          attributes: ["project_name"],
+          attributes: ["guid", "project_name", "vendor", "identity"],
         },
         {
           model: this.tenants,
-          attributes: ["name_tenant"],
+          attributes: ["name_tenant", "alias"],
         },
         {
           model: this.types,
@@ -59,7 +68,7 @@ class DeviceRepository {
 
   getByGuidForUser = async (guid, userId) => {
     return await devices.findAll({
-      attributes: ["guid", "device_sn", "device_name", "device_location", "projectId", "tenantId", "typeId"],
+      attributes: ["guid", "device_sn", "device_name", "device_location", "projectId", "tenantId", "typeId", "filter"],
       where: {
         [Op.and]: [{ guid: guid }, { userId: userId }, { status: "active" }],
       },
@@ -89,7 +98,7 @@ class DeviceRepository {
       limit,
       offset,
       where: { status: "active" },
-      attributes: ["guid", "device_sn", "device_name", "device_location", "projectId", "tenantId", "typeId"],
+      attributes: ["guid", "device_sn", "device_name", "device_location", "projectId", "tenantId", "typeId", "filter"],
       include: [
         {
           model: this.users,
@@ -140,6 +149,22 @@ class DeviceRepository {
     });
   };
 
+  deleteByProjectId = async (projectId) => {
+    return await devices.update({ status: "inactive" }, { where: { projectId: projectId } });
+  };
+
+  deleteByTypeId = async (typeId) => {
+    return await devices.update({ status: "inactive" }, { where: { typeId: typeId } });
+  };
+
+  deleteByTenantId = async (tenantId) => {
+    return await devices.update({ status: "inactive" }, { where: { tenantId: tenantId } });
+  };
+
+  deleteByUserId = async (userId) => {
+    return devices.update({ status: "inactive" }, { where: { userId: userId } });
+  };
+
   deleteForAdmin = async (guid) => {
     return await devices.update({ status: "inactive" }, { where: { guid } });
   };
@@ -148,7 +173,7 @@ class DeviceRepository {
     return await devices.update({ status: "inactive" }, { where: { [Op.and]: [{ guid: guid }, { userId: deviceUserId }] } });
   };
 
-  updateForAdmin = async (guid, device_sn, device_name, device_location, projectId, tenantId, typeId) => {
+  updateForAdmin = async (guid, device_sn, device_name, device_location, projectId, tenantId, typeId, group) => {
     return await devices.update(
       {
         device_sn: device_sn,
@@ -157,12 +182,13 @@ class DeviceRepository {
         tenantId: tenantId,
         projectId: projectId,
         typeId: typeId,
+        filter: group,
       },
       { where: { guid } }
     );
   };
 
-  updateForUser = async (guid, userId, device_sn, device_name, device_location, projectId, tenantId, typeId) => {
+  updateForUser = async (guid, userId, device_sn, device_name, device_location, projectId, tenantId, typeId, group) => {
     return await devices.update(
       {
         device_sn: device_sn,
@@ -171,6 +197,7 @@ class DeviceRepository {
         tenantId: tenantId,
         projectId: projectId,
         typeId: typeId,
+        filter: group,
       },
       { where: { [Op.and]: [{ guid: guid }, { userId: userId }] } }
     );

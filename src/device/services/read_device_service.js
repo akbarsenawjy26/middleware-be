@@ -23,6 +23,17 @@ class DeviceService {
     }
   };
 
+  getByProjectId = async (projectId) => {
+    try {
+      const data = await this.repository.getByProjectId(projectId);
+      if (!data) return { success: false, message: "Device Not Found" };
+
+      return data;
+    } catch (error) {
+      throw new Error(`Error Get Device by Guid In Service Layer: ${error.message}`);
+    }
+  };
+
   getList = async (userRole, deviceUserId, size, page) => {
     try {
       const limit = size ? parseInt(size) : 10;

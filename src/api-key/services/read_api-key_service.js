@@ -48,6 +48,16 @@ class ApiKeyService {
       throw new Error(`Error Get Api Key By guid In Service Layer: ${error.message}`);
     }
   };
+
+  getById = async (id) => {
+    try {
+      const data = await this.repository.getById(id);
+
+      return data;
+    } catch (error) {
+      throw new Error(`Error Get Api Key By id In Service Layer: ${error.message}`);
+    }
+  };
 }
 
 module.exports = new ApiKeyService(repository);
