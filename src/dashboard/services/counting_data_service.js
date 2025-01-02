@@ -1,4 +1,5 @@
-const repository = require("../../models/repository/dashboard_repository");
+// const repository = require("../../models/repository/dashboard_repository");
+const repository = require("../../repository/dashboard_repository");
 
 class DashboardService {
   constructor(repository) {

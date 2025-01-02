@@ -35,7 +35,6 @@ class ApiKeyController {
 
   getByIdController = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
 
     try {
       const data = await this.serviceGet.getById(id, req.userRole, req.deviceUserId);

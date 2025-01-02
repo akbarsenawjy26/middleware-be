@@ -1,4 +1,5 @@
-const repository = require("../../models/repository/device_repository");
+// const repository = require("../../models/repository/device_repository");
+const repository = require("../../repository/device_repository");
 
 class DeviceService {
   constructor(repository) {

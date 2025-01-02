@@ -3,7 +3,6 @@ const createService = require("../services/create_tenant_service");
 const readService = require("../services/read_tenant_service");
 const updateService = require("../services/update_tenant_service");
 const deleteService = require("../services/delete_tenant_service");
-const { response } = require("express");
 
 class TenantController {
   constructor(createService, readService, updateService, deleteService) {

@@ -47,7 +47,6 @@ class TypeController {
   getByIdController = async (req, res) => {
     const { id } = req.params;
 
-    console.log("Id:", id);
     try {
       const data = await this.readService.getById(id);
       res.status(200).json(responseHelper.success(data, `Success Get Type by Id`));

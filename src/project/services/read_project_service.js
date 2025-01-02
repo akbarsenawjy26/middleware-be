@@ -1,4 +1,4 @@
-const repository = require("../../models/repository/project_repository");
+const repository = require("../../repository/project_repository");
 
 class ProjectService {
   constructor(repository) {

@@ -5,7 +5,6 @@ const generateApiKey = async (guid) => {
   const hmac = crypto.createHmac("sha256", timestamps);
   hmac.update(guid);
   const apiKey = hmac.digest("hex");
-  console.log(apiKey);
   return apiKey;
 };
 
