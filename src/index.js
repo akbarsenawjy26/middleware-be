@@ -10,10 +10,6 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), { flags: "a" });
-// const projectModel = require("./models/project_models");
-// const apikeyModel = require("./models/api-key_models");
-// const userModel = require("./models/user_models");
-// const deviceModel = require("./models/device_models");
 
 const store = new sessionStore({
   db: db,
@@ -27,10 +23,6 @@ const dashboardRoutes = require("./dashboard/routes/dashboard_routes");
 const projectRoutes = require("./project/routes/project_routes");
 const tenantRoutes = require("./tenant/routes/tenant_routes");
 const typeRoutes = require("./type/routes/routes_type");
-
-// (async () => {
-//   await db.sync({ alter: true });
-// })();
 
 app.use(
   session({

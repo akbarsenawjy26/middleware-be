@@ -1,6 +1,10 @@
-const repository = require("../../models/repository/tenant_repository");
-const projectRepository = require("../../models/repository/project_repository");
-const deviceRepository = require("../../models/repository/device_repository");
+// const repository = require("../../models/repository/tenant_repository");
+// const projectRepository = require("../../models/repository/project_repository");
+// const deviceRepository = require("../../models/repository/device_repository");
+
+const repository = require("../../repository/tenant_repository");
+const projectRepository = require("../../repository/project_repository");
+const deviceRepository = require("../../repository/device_repository");
 
 class TenantService {
   constructor(repository, projectRepository, deviceRepository) {

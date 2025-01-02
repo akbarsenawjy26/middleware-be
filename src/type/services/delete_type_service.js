@@ -1,5 +1,8 @@
-const repository = require("../../models/repository/type_repository");
-const deviceRepository = require("../../models/repository/device_repository");
+// const repository = require("../../models/repository/type_repository");
+// const deviceRepository = require("../../models/repository/device_repository");
+
+const repository = require("../../repository/type_repository");
+const deviceRepository = require("../../repository/device_repository");
 
 class TypeService {
   constructor(repository, deviceRepository) {

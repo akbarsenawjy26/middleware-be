@@ -1,4 +1,5 @@
-const repository = require("../../models/repository/api-key_repository");
+// const repository = require("../../models/repository/api-key_repository");
+const repository = require("../../repository/api-key_repository");
 
 class ApiKeyService {
   constructor(repository) {

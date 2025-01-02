@@ -46,7 +46,6 @@ class DeviceController {
 
   getByProjectIdController = async (req, res) => {
     const { projectId } = req.params;
-    console.log("project ID:", projectId);
     try {
       const data = await this.serviceGet.getByProjectId(projectId);
 

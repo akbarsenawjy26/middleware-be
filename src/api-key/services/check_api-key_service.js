@@ -1,4 +1,5 @@
-const repository = require("../../models/repository/api-key_repository");
+// const repository = require("../../models/repository/api-key_repository");
+const repository = require("../../repository/api-key_repository");
 
 class ApiKeyService {
   constructor(repository) {
@@ -11,7 +12,7 @@ class ApiKeyService {
       if (!data) {
         return null;
       }
-      console.log(data);
+
       return data;
     } catch (error) {
       throw new Error(`Error Checking API Key In Service: ${error.message}`);

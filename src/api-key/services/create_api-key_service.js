@@ -1,4 +1,5 @@
-const repository = require("../../models/repository/api-key_repository");
+// const repository = require("../../models/repository/api-key_repository");
+const repository = require("../../repository/api-key_repository");
 const moment = require("moment");
 const generateApiKey = require("../../../utils/generate_api_utils");
 const dbExtraFunction = require("../../../utils/db_tx");

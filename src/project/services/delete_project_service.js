@@ -1,6 +1,10 @@
-const repository = require("../../models/repository/project_repository");
-const deviceRepository = require("../../models/repository/device_repository");
-const apikeysRepository = require("../../models/repository/api-key_repository");
+// const repository = require("../../models/repository/project_repository");
+// const deviceRepository = require("../../models/repository/device_repository");
+// const apikeysRepository = require("../../models/repository/api-key_repository");
+
+const repository = require("../../repository/project_repository");
+const deviceRepository = require("../../repository/device_repository");
+const apikeysRepository = require("../../repository/api-key_repository");
 
 class ProjectService {
   constructor(repository, deviceRepository, apikeysRepository) {

@@ -1,4 +1,5 @@
-const repository = require("../../models/repository/tenant_repository");
+// const repository = require("../../models/repository/tenant_repository");
+const repository = require("../../repository/tenant_repository");
 
 class TenantService {
   constructor(repository) {
