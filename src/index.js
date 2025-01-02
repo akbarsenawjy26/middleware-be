@@ -6,6 +6,7 @@ const SequelizeStore = require("connect-session-sequelize");
 const db = require("../config/auth_database_config");
 require("dotenv").config();
 const app = express();
+const port = process.env.APP_PORT;
 const sessionStore = SequelizeStore(session.Store);
 const morgan = require("morgan");
 const fs = require("fs");
@@ -58,6 +59,7 @@ app.use("/api/v1/project", projectRoutes);
 app.use("/api/v1/tenant", tenantRoutes);
 app.use("/api/v1/type", typeRoutes);
 
-app.listen(process.env.APP_PORT || 3001, "0.0.0.0", () => {
+app.listen(port, "0.0.0.0", () => {
+  console.log();
   console.log("Middleware App Running");
 });

@@ -37,8 +37,6 @@ module.exports = (sequelize, DataTypes) => {
       typeId: DataTypes.INTEGER,
       createdBy: DataTypes.STRING,
       updatedBy: DataTypes.STRING,
-      createdBy: DataTypes.DATE,
-      updatedBy: DataTypes.DATE,
     },
     {
       sequelize,

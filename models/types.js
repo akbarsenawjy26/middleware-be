@@ -26,8 +26,8 @@ module.exports = (sequelize, DataTypes) => {
       userId: DataTypes.INTEGER,
       createdBy: DataTypes.STRING,
       updatedBy: DataTypes.STRING,
-      createdBy: DataTypes.DATE,
-      updatedBy: DataTypes.DATE,
+      createdBy: DataTypes.STRING,
+      updatedBy: DataTypes.STRING,
     },
     {
       sequelize,
