@@ -3,13 +3,13 @@ version: "3.8"
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql-container
+    container_name: mysql-container-be
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USERNAME}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -19,7 +19,7 @@ services:
 
   influxdb:
     image: influxdb:2.7
-    container_name: influxdb-container
+    container_name: influxdb-container-2
     restart: always
     environment:
       DOCKER_INFLUXDB_INIT_MODE: setup
@@ -36,7 +36,7 @@ services:
 
   emqx:
     image: emqx/emqx:latest
-    container_name: emqx-container
+    container_name: emqx-container-2
     restart: always
     environment:
       EMQX_NAME: "emqx"
@@ -54,21 +54,29 @@ services:
     networks:
       - my_network
 
-  telegraf:
-    image: telegraf:latest
-    container_name: telegraf-container
+  middleware-be:
+    image: akbarsenawjy/middleware-be:latest
+    container_name: middleware-be
     restart: always
-    environment:
-      TELEGRAF_CONFIG_PATH: /etc/telegraf/telegraf.conf
-    volumes:
-      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
     ports:
-      - "8125:8125/udp"
-      - "8092:8092"
-    depends_on:
-      - influxdb
+      - "3001:3001"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      APP_PORT: ${APP_PORT}
+      APP_SECRETE_SESSION: ${APP_SECRETE_SESSION}
+      DB_HOST: mysql
+      DB_DIALECT: ${DB_DIALECT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    command: sh -c "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all && npm start"
     networks:
       - my_network
+    depends_on:
+      - mysql
+      - influxdb
+      - emqx
 
 volumes:
   mysql_data:
