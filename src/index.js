@@ -1,16 +1,19 @@
 const express = require("express");
+const helmet = require("helmet");
 const cors = require("cors");
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize");
 const db = require("../config/auth_database_config");
 require("dotenv").config();
 const app = express();
+const port = process.env.APP_PORT;
 const sessionStore = SequelizeStore(session.Store);
 const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), { flags: "a" });
 
+app.use(helmet());
 const store = new sessionStore({
   db: db,
 });
@@ -56,6 +59,7 @@ app.use("/api/v1/project", projectRoutes);
 app.use("/api/v1/tenant", tenantRoutes);
 app.use("/api/v1/type", typeRoutes);
 
-app.listen(3001, "0.0.0.0", () => {
+app.listen(port, "0.0.0.0", () => {
+  console.log();
   console.log("Middleware App Running");
 });

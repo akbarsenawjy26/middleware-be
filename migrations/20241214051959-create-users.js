@@ -45,14 +45,12 @@ module.exports = {
           defaultValue: "system",
         },
         createdAt: {
-          allowNull: false,
+          allowNull: true,
           type: Sequelize.DATE,
-          defaultValue: Sequelize.DataTypes.NOW(),
         },
         updatedAt: {
           allowNull: false,
           type: Sequelize.DATE,
-          defaultValue: Sequelize.DataTypes.NOW(),
         },
       },
       {
