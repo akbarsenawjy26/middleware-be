@@ -1,6 +1,6 @@
 module.exports = {
   port: process.env.DEV_APP_PORT || 3001,
-  sessionSecrete: process.env.DEV_APP_SECRETE_SESSION,
+  sessionSecret: process.env.DEV_APP_SECRET_SESSION,
   db: {
     host: process.env.DEV_DB_HOST,
     database: process.env.DEV_DB_DATABASE,
