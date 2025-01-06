@@ -9,10 +9,10 @@ class AuthController {
       const result = await loginService.userAuth(email, password);
 
       if (!result.success) {
-        return res.status(400).json(responseHelper.fail(null, result.message));
+        return res.status(400).json(responseHelper.fail(null, result.data));
       }
 
-      req.session.userGuid = result.message.guid;
+      req.session.userGuid = result.data.guid;
 
       return res.status(200).json(responseHelper.success(result.message, "Login successful!"));
     } catch (error) {
