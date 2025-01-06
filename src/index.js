@@ -13,11 +13,10 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), { flags: "a" });
-
-app.use(helmet());
 const store = new sessionStore({
   db: db,
 });
+app.use(helmet());
 
 const userRoutes = require("./user/routes/user_routes");
 const authRoutes = require("./auth/routes/auth_routes");
@@ -39,6 +38,15 @@ app.use(
     },
   })
 );
+
+sequelize
+  .sync()
+  .then(() => {
+    console.log("Database synced successfully");
+  })
+  .catch((err) => {
+    console.error("Error syncing database:", err);
+  });
 
 app.use(
   cors({
