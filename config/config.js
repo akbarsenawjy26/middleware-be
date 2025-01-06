@@ -1,28 +1,28 @@
-require("dotenv").config();
+const config = require("./index");
 
 module.exports = {
   development: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
+    username: config.db.username,
+    password: config.db.password,
+    database: config.db.database,
+    host: config.db.host,
+    dialect: config.db.dialect,
     logging: false,
   },
-  test: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
+  stagging: {
+    username: config.db.username,
+    password: config.db.password,
+    database: config.db.database,
+    host: config.db.host,
+    dialect: config.db.dialect,
     logging: false,
   },
   production: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
+    username: config.db.username,
+    password: config.db.password,
+    database: config.db.database,
+    host: config.db.host,
+    dialect: config.db.dialect,
     logging: false,
   },
 };
