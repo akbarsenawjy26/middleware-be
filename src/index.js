@@ -16,7 +16,6 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"),
 const store = new sessionStore({
   db: db,
 });
-app.use(helmet());
 
 const userRoutes = require("./user/routes/user_routes");
 const authRoutes = require("./auth/routes/auth_routes");
@@ -39,13 +38,16 @@ app.use(
   })
 );
 
-db.sync()
+store
+  .sync()
   .then(() => {
-    console.log("Database synced successfully");
+    console.log("Session table synced successfully!");
   })
   .catch((err) => {
-    console.error("Error syncing database:", err);
+    console.error("Error syncing session table:", err);
   });
+
+app.use(helmet());
 
 app.use(
   cors({
