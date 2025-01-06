@@ -3,23 +3,39 @@ const config = require("../config");
 const helmet = require("helmet");
 const cors = require("cors");
 const session = require("express-session");
-const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const SequelizeStore = require("connect-session-sequelize");
 const db = require("../config/auth_database_config");
 require("dotenv").config();
 const app = express();
 const port = config.port;
-// const morgan = require("morgan");
-// const fs = require("fs");
-// const path = require("path");
-// // const accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), { flags: "a" });
+const sessionStore = SequelizeStore(session.Store);
 
-app.use(helmet());
-
-const store = new SequelizeStore({
+const store = new sessionStore({
   db: db,
 });
 
-store.sync();
+app.use(
+  session({
+    secret: config.sessionSecret,
+    resave: false,
+    saveUninitialized: true,
+    store: store,
+    cookie: {
+      secure: false,
+    },
+  })
+);
+
+store
+  .sync()
+  .then(() => {
+    console.log("Session table synced successfully!");
+  })
+  .catch((err) => {
+    console.error("Error syncing session table:", err);
+  });
+
+app.use(helmet());
 
 const userRoutes = require("./user/routes/user_routes");
 const authRoutes = require("./auth/routes/auth_routes");
@@ -31,18 +47,6 @@ const tenantRoutes = require("./tenant/routes/tenant_routes");
 const typeRoutes = require("./type/routes/routes_type");
 
 app.use(
-  session({
-    secret: config.sessionSecret,
-    resave: false,
-    saveUninitialized: true,
-    store: store,
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-    },
-  })
-);
-
-app.use(
   cors({
     credentials: true,
     origin: true,
@@ -51,7 +55,6 @@ app.use(
 );
 
 app.use(express.json());
-// app.use(morgan("combined", { stream: accessLogStream }));
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/auth", authRoutes);
@@ -63,5 +66,5 @@ app.use("/api/v1/tenant", tenantRoutes);
 app.use("/api/v1/type", typeRoutes);
 
 app.listen(port, "0.0.0.0", () => {
-  console.log(`Service Backend Middleware Running on ${process.env.NODE_ENV || "development"} Environment`);
+  console.log(`Service Backend Middleware Running on ${process.env.NODE_ENV} Environment`);
 });
