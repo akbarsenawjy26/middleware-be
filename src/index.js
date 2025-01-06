@@ -39,6 +39,15 @@ app.use(
   })
 );
 
+sequelize
+  .sync()
+  .then(() => {
+    console.log("Database synced successfully");
+  })
+  .catch((err) => {
+    console.error("Error syncing database:", err);
+  });
+
 app.use(
   cors({
     credentials: true,
