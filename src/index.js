@@ -39,8 +39,7 @@ app.use(
   })
 );
 
-sequelize
-  .sync()
+db.sync()
   .then(() => {
     console.log("Database synced successfully");
   })
