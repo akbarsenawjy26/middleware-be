@@ -7,11 +7,11 @@ const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const db = require("../config/auth_database_config");
 require("dotenv").config();
 const app = express();
-const port = config.port || 3000; // Default port if not specified in config
-const morgan = require("morgan");
-const fs = require("fs");
-const path = require("path");
-const accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), { flags: "a" });
+const port = config.port;
+// const morgan = require("morgan");
+// const fs = require("fs");
+// const path = require("path");
+// // const accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), { flags: "a" });
 
 app.use(helmet());
 
@@ -19,7 +19,7 @@ const store = new SequelizeStore({
   db: db,
 });
 
-store.sync(); // Ensure session table is created
+store.sync();
 
 const userRoutes = require("./user/routes/user_routes");
 const authRoutes = require("./auth/routes/auth_routes");
@@ -32,12 +32,12 @@ const typeRoutes = require("./type/routes/routes_type");
 
 app.use(
   session({
-    secret: config.sessionSecret || "defaultSecret", // Use default if not defined
+    secret: config.sessionSecret,
     resave: false,
     saveUninitialized: true,
     store: store,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Secure cookies in production
+      secure: process.env.NODE_ENV === "production",
     },
   })
 );
@@ -50,7 +50,7 @@ app.use(
 );
 
 app.use(express.json());
-app.use(morgan("combined", { stream: accessLogStream }));
+// app.use(morgan("combined", { stream: accessLogStream }));
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/auth", authRoutes);
