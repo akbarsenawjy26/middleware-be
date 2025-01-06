@@ -21,8 +21,9 @@ app.use(
     saveUninitialized: true,
     store: store,
     cookie: {
-      // secure: false,
-      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      secure: false,
+      sameSite: "none",
     },
   })
 );
@@ -51,7 +52,6 @@ app.use(
   cors({
     credentials: true,
     origin: "http://localhost:3000",
-    // AllowOrigin: ["*"],
   })
 );
 
