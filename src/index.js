@@ -38,15 +38,6 @@ app.use(
   })
 );
 
-store
-  .sync()
-  .then(() => {
-    console.log("Session table synced successfully!");
-  })
-  .catch((err) => {
-    console.error("Error syncing session table:", err);
-  });
-
 app.use(helmet());
 
 app.use(
@@ -70,5 +61,5 @@ app.use("/api/v1/tenant", tenantRoutes);
 app.use("/api/v1/type", typeRoutes);
 
 app.listen(port, "0.0.0.0", () => {
-  console.log(`Middleware App Running on ${process.env.NODE_ENV} Environment`);
+  console.log(`Service Backend Middleware Running on ${process.env.NODE_ENV} Environment`);
 });
