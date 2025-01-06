@@ -3,12 +3,11 @@ const config = require("../config");
 const helmet = require("helmet");
 const cors = require("cors");
 const session = require("express-session");
-const SequelizeStore = require("connect-session-sequelize");
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const db = require("../config/auth_database_config");
 require("dotenv").config();
 const app = express();
-const port = config.port;
-const sessionStore = SequelizeStore(session.Store);
+const port = config.port || 3000; // Default port if not specified in config
 const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
@@ -16,9 +15,11 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"),
 
 app.use(helmet());
 
-const store = new sessionStore({
+const store = new SequelizeStore({
   db: db,
 });
+
+store.sync(); // Ensure session table is created
 
 const userRoutes = require("./user/routes/user_routes");
 const authRoutes = require("./auth/routes/auth_routes");
@@ -31,12 +32,12 @@ const typeRoutes = require("./type/routes/routes_type");
 
 app.use(
   session({
-    secret: config.sessionSecrete,
+    secret: config.sessionSecret || "defaultSecret", // Use default if not defined
     resave: false,
     saveUninitialized: true,
     store: store,
     cookie: {
-      secure: false,
+      secure: process.env.NODE_ENV === "production", // Secure cookies in production
     },
   })
 );
@@ -44,8 +45,7 @@ app.use(
 app.use(
   cors({
     credentials: true,
-    origin: true,
-    AllowOrigin: ["*"],
+    origin: "*", // Allow all origins
   })
 );
 
@@ -62,5 +62,5 @@ app.use("/api/v1/tenant", tenantRoutes);
 app.use("/api/v1/type", typeRoutes);
 
 app.listen(port, "0.0.0.0", () => {
-  console.log(`Service Backend Middleware Running on ${process.env.NODE_ENV} Environment`);
+  console.log(`Service Backend Middleware Running on ${process.env.NODE_ENV || "development"} Environment`);
 });

@@ -1,6 +1,6 @@
 module.exports = {
   port: process.env.STAG_APP_PORT || 4001,
-  sessionSecrete: process.env.STAG_APP_SECRETE_SESSION,
+  sessionSecret: process.env.STAG_APP_SECRET_SESSION,
   db: {
     host: process.env.STAG_DB_HOST,
     database: process.env.STAG_DB_DATABASE,
