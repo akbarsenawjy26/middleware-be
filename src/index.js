@@ -21,7 +21,8 @@ app.use(
     saveUninitialized: true,
     store: store,
     cookie: {
-      secure: false,
+      // secure: false,
+      secure: process.env.NODE_ENV === "production",
     },
   })
 );
@@ -49,8 +50,8 @@ const typeRoutes = require("./type/routes/routes_type");
 app.use(
   cors({
     credentials: true,
-    origin: true,
-    AllowOrigin: ["*"],
+    origin: "http://localhost:3000",
+    // AllowOrigin: ["*"],
   })
 );
 
