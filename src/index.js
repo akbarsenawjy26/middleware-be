@@ -1,4 +1,5 @@
 const express = require("express");
+const config = require("../config");
 const helmet = require("helmet");
 const cors = require("cors");
 const session = require("express-session");
@@ -6,7 +7,7 @@ const SequelizeStore = require("connect-session-sequelize");
 const db = require("../config/auth_database_config");
 require("dotenv").config();
 const app = express();
-const port = process.env.APP_PORT;
+const port = config.port;
 const sessionStore = SequelizeStore(session.Store);
 const morgan = require("morgan");
 const fs = require("fs");
@@ -29,7 +30,7 @@ const typeRoutes = require("./type/routes/routes_type");
 
 app.use(
   session({
-    secret: process.env.APP_SECRETE_SESSION,
+    secret: config.sessionSecrete,
     resave: false,
     saveUninitialized: true,
     store: store,
@@ -60,6 +61,5 @@ app.use("/api/v1/tenant", tenantRoutes);
 app.use("/api/v1/type", typeRoutes);
 
 app.listen(port, "0.0.0.0", () => {
-  console.log();
-  console.log("Middleware App Running");
+  console.log(`Middleware App Running on ${process.env.NODE_ENV} Environment`);
 });
