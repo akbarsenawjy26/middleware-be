@@ -15,6 +15,13 @@ const store = new sessionStore({
 });
 
 app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:3000",
+  })
+);
+
+app.use(
   session({
     secret: config.sessionSecret,
     resave: false,
@@ -47,13 +54,6 @@ const dashboardRoutes = require("./dashboard/routes/dashboard_routes");
 const projectRoutes = require("./project/routes/project_routes");
 const tenantRoutes = require("./tenant/routes/tenant_routes");
 const typeRoutes = require("./type/routes/routes_type");
-
-app.use(
-  cors({
-    credentials: true,
-    origin: "http://localhost:3000",
-  })
-);
 
 app.use(express.json());
 
