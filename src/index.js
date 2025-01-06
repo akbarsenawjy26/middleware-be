@@ -45,7 +45,8 @@ app.use(
 app.use(
   cors({
     credentials: true,
-    origin: "*", // Allow all origins
+    origin: "*",
+    allowOrigin: ["*"],
   })
 );
 
