@@ -24,7 +24,7 @@ class AuthController {
   sessionCheck = async (req, res) => {
     try {
       console.log("Req Session Guid at session check: ", req.session.userGuid);
-      if (!req.session && req.session.userGuid) {
+      if (!req.session && !req.session.userGuid) {
         return res.status(500).json(responseHelper.fail(null, "Please login first"));
       }
 
