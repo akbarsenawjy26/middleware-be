@@ -2,7 +2,7 @@ const express = require("express");
 const config = require("../config");
 const cors = require("cors");
 const session = require("express-session");
-const cookieSession = require("cookie-session");
+const cookieParser = require("cookie-parser");
 const SequelizeStore = require("connect-session-sequelize");
 const sessionStore = SequelizeStore(session.Store);
 const db = require("../config/auth_database_config");
@@ -22,6 +22,8 @@ app.use(
     AllowOrigin: ["*"],
   })
 );
+
+app.use(cookieParser());
 
 app.use(
   session({
