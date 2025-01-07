@@ -12,7 +12,7 @@ class AuthController {
         return res.status(400).json(responseHelper.fail(null, result.message));
       }
 
-      req.session.userGuid = result.message.guid;
+      req.session.userGuid = await result.message.guid;
       console.log("Session After Login:", req.session);
 
       return res.status(200).json(responseHelper.success(result.message, "Login successful!"));
