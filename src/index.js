@@ -2,34 +2,37 @@ const express = require("express");
 const config = require("../config");
 const cors = require("cors");
 const session = require("express-session");
-const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const cookieSession = require("cookie-session");
+const SequelizeStore = require("connect-session-sequelize");
+const sessionStore = SequelizeStore(session.Store);
 const db = require("../config/auth_database_config");
 require("dotenv").config();
 const app = express();
 const port = config.port;
 
-const store = new SequelizeStore({
+const store = new sessionStore({
   db: db.sequelizeConnection,
-  tableName: "Sessions",
-  maxAge: 3600000,
 });
 
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
+    origin: true,
+    AllowOrigin: ["*"],
   })
 );
 
 app.use(
   session({
     secret: config.sessionSecret,
-    resave: false,
+    resave: true,
     saveUninitialized: true,
     store: store,
     cookie: {
-      httpOnly: true,
       secure: false,
+      httpOnly: true,
+      maxAge: 3600000,
     },
   })
 );
