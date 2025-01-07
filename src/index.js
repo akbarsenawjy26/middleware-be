@@ -3,15 +3,17 @@ const config = require("../config");
 const helmet = require("helmet");
 const cors = require("cors");
 const session = require("express-session");
-const SequelizeStore = require("connect-session-sequelize");
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const db = require("../config/auth_database_config");
 require("dotenv").config();
 const app = express();
 const port = config.port;
-const sessionStore = SequelizeStore(session.Store);
+// const sessionStore = SequelizeStore(session.Store);
 
-const store = new sessionStore({
+const store = new SequelizeStore({
   db: db,
+  tableName: "sessions",
+  maxAge: 3600000,
 });
 
 app.use(
