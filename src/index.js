@@ -19,8 +19,7 @@ const store = new SequelizeStore({
 app.use(
   cors({
     credentials: true,
-    origin: "*",
-    AllowOrigin: ["*"],
+    origin: "http://localhost:3000",
   })
 );
 
@@ -33,8 +32,6 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: false,
-      sameSite: "None",
-      path: "/",
     },
   })
 );
