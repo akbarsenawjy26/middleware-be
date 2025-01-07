@@ -10,16 +10,25 @@ require("dotenv").config();
 const app = express();
 const port = config.port;
 
+const corsOptions = {
+  origin: "*", // Mengizinkan semua origin (seperti "*"), bisa disesuaikan untuk production
+  credentials: true, // Memungkinkan kredensial (cookies)
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"], // Metode yang diizinkan
+  allowedHeaders: [
+    "Origin",
+    "Content-Type",
+    "Accept",
+    "Authorization", // Jika menggunakan JWT atau header otorisasi lainnya
+    "Token", // Custom header token (sesuaikan dengan aplikasi kamu)
+    "RefreshToken", // Custom header untuk refresh token (sesuaikan dengan aplikasi kamu)
+  ],
+};
+
 const store = new sessionStore({
   db: db.sequelizeConnection,
 });
 
-app.use(
-  cors({
-    credentials: true,
-    origin: "http://localhost:3000",
-  })
-);
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
 
