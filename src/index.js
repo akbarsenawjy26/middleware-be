@@ -43,7 +43,7 @@ app.use(
   session({
     secret: config.sessionSecret, // Kunci rahasia untuk session
     resave: false, // Jangan simpan session meskipun tidak ada perubahan
-    saveUninitialized: true, // Simpan session meskipun belum ada data
+    saveUninitialized: false, // Simpan session meskipun belum ada data
     store: store, // Gunakan store Sequelize untuk session
     cookie: {
       secure: false, // Setel ke `true` jika menggunakan HTTPS
