@@ -13,7 +13,7 @@ const port = config.port;
 
 // CORS configuration
 const corsOptions = {
-  origin: ["http://localhost:3000"], // Mengizinkan semua origin, bisa disesuaikan untuk produksi
+  origin: ["http://localhost:3000"].includes(origin), // Mengizinkan semua origin, bisa disesuaikan untuk produksi
   credentials: true, // Memungkinkan kredensial (cookies)
   preflightContinue: true,
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"], // Metode yang diizinkan
