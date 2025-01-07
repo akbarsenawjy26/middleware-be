@@ -3,7 +3,7 @@ const responseHelper = require("./response_utils");
 const apiKeyService = require("../src/api-key/services/check_api-key_service");
 
 const verifySession = async (req, res, next) => {
-  if (!req.session) {
+  if (!req.session.userGuid) {
     return res.status(401).json(responseHelper.fail(null, "Please login first"));
   }
 
