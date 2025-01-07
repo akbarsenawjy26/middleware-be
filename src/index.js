@@ -13,7 +13,7 @@ const port = config.port;
 
 // CORS configuration
 const corsOptions = {
-  origin: ["http://localhost:3000"].includes(origin), // Mengizinkan semua origin, bisa disesuaikan untuk produksi
+  origin: ["http://localhost:3000"], // Mengizinkan semua origin, bisa disesuaikan untuk produksi
   credentials: true, // Memungkinkan kredensial (cookies)
   preflightContinue: true,
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"], // Metode yang diizinkan
@@ -43,7 +43,7 @@ app.use(
   session({
     secret: config.sessionSecret, // Kunci rahasia untuk session
     resave: false, // Jangan simpan session meskipun tidak ada perubahan
-    saveUninitialized: true, // Simpan session meskipun belum ada data
+    saveUninitialized: false, // Simpan session meskipun belum ada data
     store: store, // Gunakan store Sequelize untuk session
     cookie: {
       secure: false, // Setel ke `true` jika menggunakan HTTPS
