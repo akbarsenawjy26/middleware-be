@@ -17,9 +17,7 @@ const store = new sessionStore({
 app.use(
   cors({
     credentials: true,
-    // origin: "http://localhost:3000",
-    origin: true,
-    AllowOrigin: ["*"],
+    origin: "http://localhost:3000",
   })
 );
 
@@ -28,12 +26,14 @@ app.use(cookieParser());
 app.use(
   session({
     secret: config.sessionSecret,
-    resave: true,
+    resave: false,
     saveUninitialized: true,
     store: store,
     cookie: {
       secure: false,
+      sameSite: "none",
       httpOnly: true,
+      path: "/",
       maxAge: 3600000,
     },
   })
