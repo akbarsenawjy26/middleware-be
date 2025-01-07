@@ -1,45 +1,43 @@
-const userModels = require("../../models/user_models");
-const deviceModels = require("../../models/device_models");
-const apikeyeModels = require("../../models/api-key_models");
+const { projects, devices, apikeys } = require("../../../models");
 
 class DashboardRepository {
-  constructor(userModels, deviceModels, apikeyeModels) {
-    this.userModels = userModels;
-    this.deviceModels = deviceModels;
-    this.apikeyeModels = apikeyeModels;
+  constructor(projects, devices, apikeys) {
+    this.projects = projects;
+    this.devices = devices;
+    this.apikeys = apikeys;
   }
 
-  userCounterForAdmin = async () => {
-    return await userModels.count();
+  projectCounterForAdmin = async () => {
+    return this.projects.count({ where: { status: "active" } });
   };
 
   deviceCounterForAdmin = async () => {
-    return await deviceModels.count();
+    return await this.devices.count({ where: { status: "active" } });
   };
 
   apiKeyCounterForAdmin = async () => {
-    return await apikeyeModels.count();
+    return await this.apikeys.count({ where: { status: "active" } });
   };
 
-  userCounterForUser = async () => {
+  projectCounterForUser = async () => {
     return 0;
   };
 
   deviceCounterForUser = async (deviceUserId) => {
-    return await deviceModels.count({
+    return await this.devices.count({
       where: {
-        userId: deviceUserId,
+        [Op.and]: [{ userId: deviceUserId }, { status: "active" }],
       },
     });
   };
 
   apiKeyCounterForUser = async (deviceUserId) => {
-    return await apikeyeModels.count({
+    return await this.apikeys.count({
       where: {
-        userId: deviceUserId,
+        [Op.and]: [{ userId: deviceUserId }, { status: "active" }],
       },
     });
   };
 }
 
-module.exports = new DashboardRepository(userModels, deviceModels, apikeyeModels);
+module.exports = new DashboardRepository(projects, devices, apikeys);

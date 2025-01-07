@@ -1,131 +1,219 @@
-const deviceModel = require("../device_models");
-const userModel = require("../user_models");
-const projectModel = require("../project_models");
+const { devices, users, tenants, projects, types } = require("../../../models");
+const { Op } = require("sequelize");
 
 class DeviceRepository {
-  constructor(deviceModel) {
-    this.deviceModel = deviceModel;
+  constructor(devices, users, tenants, projects, types) {
+    this.devices = devices;
+    this.users = users;
+    this.tenants = tenants;
+    this.projects = projects;
+    this.types = types;
   }
 
-  createDevice = async (device_sn, device_name, device_type, device_location, projectId, deviceUserId) => {
-    return await deviceModel.create({
+  create = async (device_sn, device_name, device_location, projectId, deviceUserId, tenantId, typeId, group) => {
+    return await devices.create({
       device_sn: device_sn,
       device_name: device_name,
-      device_type: device_type,
       device_location: device_location,
-      projectId: projectId,
       userId: deviceUserId,
+      tenantId: tenantId,
+      projectId: projectId,
+      typeId: typeId,
+      filter: group,
     });
   };
 
-  getDeviceByGuid = async (guid) => {
-    return await deviceModel.findOne({ where: { guid } });
+  getByGuid = async (guid) => {
+    return await devices.findOne({
+      where: {
+        [Op.and]: [{ guid: guid }, { status: "active" }],
+      },
+    });
   };
 
-  getDeviceByGuidForAdmin = async (guid) => {
-    return await deviceModel.findOne({
-      where: { guid: guid },
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "projectId"],
+  getByProjectId = async (projectId) => {
+    return await devices.findAll({
+      where: {
+        [Op.and]: [{ projectId: projectId }, { status: "active" }],
+      },
+    });
+  };
+
+  getByGuidForAdmin = async (guid) => {
+    return await devices.findOne({
+      where: {
+        [Op.and]: [{ guid: guid }, { status: "active" }],
+      },
+      attributes: ["guid", "device_sn", "device_name", "device_location", "projectId", "tenantId", "typeId", "filter"],
       include: [
         {
-          model: userModel,
+          model: this.users,
           attributes: ["name", "email"],
         },
         {
-          model: projectModel,
-          attributes: ["project_name"],
+          model: this.projects,
+          attributes: ["guid", "project_name", "vendor", "identity"],
+        },
+        {
+          model: this.tenants,
+          attributes: ["name_tenant", "alias"],
+        },
+        {
+          model: this.types,
+          attributes: ["name_type"],
         },
       ],
     });
   };
 
-  getDeviceByGuidForUser = async (guid, userId) => {
-    return await deviceModel.findAll({
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "projectId"],
+  getByGuidForUser = async (guid, userId) => {
+    return await devices.findAll({
+      attributes: ["guid", "device_sn", "device_name", "device_location", "projectId", "tenantId", "typeId", "filter"],
       where: {
-        [Op.and]: [{ guid: guid }, { userId: userId }],
+        [Op.and]: [{ guid: guid }, { userId: userId }, { status: "active" }],
       },
       include: [
         {
-          model: userModel,
+          model: this.users,
           attributes: ["name", "email"],
         },
         {
-          model: projectModel,
+          model: this.projects,
           attributes: ["project_name"],
+        },
+        {
+          model: this.tenants,
+          attributes: ["name_tenant"],
+        },
+        {
+          model: this.types,
+          attributes: ["name_type"],
         },
       ],
     });
   };
 
-  getDeviceListForAdmin = async () => {
-    return await deviceModel.findAll({
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "projectId"],
+  getListForAdmin = async (limit, offset) => {
+    return await devices.findAll({
+      limit,
+      offset,
+      where: { status: "active" },
+      attributes: ["guid", "device_sn", "device_name", "device_location", "projectId", "tenantId", "typeId", "filter"],
       include: [
         {
-          model: userModel,
+          model: this.users,
           attributes: ["name", "email"],
         },
         {
-          model: projectModel,
+          model: this.projects,
           attributes: ["project_name"],
+        },
+        {
+          model: this.tenants,
+          attributes: ["name_tenant"],
+        },
+        {
+          model: this.types,
+          attributes: ["name_type"],
         },
       ],
     });
   };
 
-  getDeviceListForUser = async (deviceUserId) => {
-    return await deviceModel.findAll({
-      attributes: ["guid", "device_sn", "device_name", "device_type", "device_location", "projectId"],
+  getListForUser = async (deviceUserId, limit, offset) => {
+    return await devices.findAll({
+      limit,
+      offset,
+      attributes: ["guid", "device_sn", "device_name", "device_location", "projectId", "tenantId", "typeId"],
       where: {
-        userId: deviceUserId,
+        [Op.and]: [{ userId: deviceUserId }, { status: "active" }],
       },
       include: [
         {
-          model: userModel,
+          model: this.users,
           attributes: ["name", "email"],
         },
         {
-          model: projectModel,
+          model: this.projects,
           attributes: ["project_name"],
+        },
+        {
+          model: this.tenants,
+          attributes: ["name_tenant"],
+        },
+        {
+          model: this.types,
+          attributes: ["name_type"],
         },
       ],
     });
   };
 
-  deleteDeviceForAdmin = async (guid) => {
-    return await deviceModel.destroy({ where: { guid } });
+  deleteByProjectId = async (projectId) => {
+    return await devices.update({ status: "inactive" }, { where: { projectId: projectId } });
   };
 
-  deleteDeviceForUser = async (guid, deviceUserId) => {
-    return await deviceModel.destroy({ where: { [Op.and]: [{ guid: guid }, { userId: deviceUserId }] } });
+  deleteByTypeId = async (typeId) => {
+    return await devices.update({ status: "inactive" }, { where: { typeId: typeId } });
   };
 
-  updateDeviceForAdmin = async (guid, device_sn, device_name, device_type, device_location, projectId) => {
-    return await deviceModel.update(
+  deleteByTenantId = async (tenantId) => {
+    return await devices.update({ status: "inactive" }, { where: { tenantId: tenantId } });
+  };
+
+  deleteByUserId = async (userId) => {
+    return devices.update({ status: "inactive" }, { where: { userId: userId } });
+  };
+
+  deleteForAdmin = async (guid) => {
+    return await devices.update({ status: "inactive" }, { where: { guid } });
+  };
+
+  deleteForUser = async (guid, deviceUserId) => {
+    return await devices.update({ status: "inactive" }, { where: { [Op.and]: [{ guid: guid }, { userId: deviceUserId }] } });
+  };
+
+  updateForAdmin = async (guid, device_sn, device_name, device_location, projectId, tenantId, typeId, group) => {
+    return await devices.update(
       {
         device_sn: device_sn,
         device_name: device_name,
-        device_type: device_type,
         device_location: device_location,
+        tenantId: tenantId,
         projectId: projectId,
+        typeId: typeId,
+        filter: group,
       },
       { where: { guid } }
     );
   };
 
-  updateDeviceForUser = async (guid, userId, device_sn, device_name, device_type, device_location, projectId) => {
-    return await device.update(
+  updateForUser = async (guid, userId, device_sn, device_name, device_location, projectId, tenantId, typeId, group) => {
+    return await devices.update(
       {
         device_sn: device_sn,
         device_name: device_name,
-        device_type: device_type,
         device_location: device_location,
+        tenantId: tenantId,
         projectId: projectId,
+        typeId: typeId,
+        filter: group,
       },
       { where: { [Op.and]: [{ guid: guid }, { userId: userId }] } }
     );
   };
+
+  countDataAdmin = async () => {
+    return await devices.count({
+      where: { status: "active" },
+    });
+  };
+
+  countDataUser = async (deviceUserId) => {
+    return await devices.count({
+      where: { [Op.and]: [{ userId: deviceUserId }, { status: "active" }] },
+    });
+  };
 }
 
-module.exports = new DeviceRepository(deviceModel);
+module.exports = new DeviceRepository(devices, users, tenants, projects, types);

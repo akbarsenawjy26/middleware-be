@@ -1,58 +1,40 @@
-const apiKeyModel = require("../../models/api-key_models");
-const { Op } = require("sequelize");
+// const repository = require("../../models/repository/api-key_repository");
+const repository = require("../../repository/api-key_repository");
+
 const moment = require("moment");
-const ApiKeyRepository = require("../../models/repository/api-key_repository");
+const dbExtraFunction = require("../../../utils/db_tx");
 
 class ApiKeyService {
-  constructor(ApiKeyRepository) {
-    this.ApiKeyRepository = ApiKeyRepository;
+  constructor(repository, dbExtraFunction) {
+    this.repository = repository;
+    this.dbExtraFunction = dbExtraFunction;
   }
 
-  updateApiKey = async (guid, note, expires_at, userRole, projetId, userId) => {
+  update = async (guid, note, expires_at, userRole, projetId, userId) => {
     try {
-      let expiryDate = null;
+      let expiryDate = moment(expires_at).format("YYYY-MM-DD HH:mm:ss");
 
-      switch (expires_at) {
-        case "3 hari":
-          expiryDate = moment().add(3, "days").toDate();
-          break;
-        case "7 hari":
-          expiryDate = moment().add(7, "days").toDate();
-          break;
-        case "1 bulan":
-          expiryDate = moment().add(1, "months").toDate();
-          break;
-        case "3 bulan":
-          expiryDate = moment().add(3, "months").toDate();
-          break;
-        case "1 tahun":
-          expiryDate = moment().add(1, "years").toDate();
-          break;
-        case "never":
-          expiryDate = null;
-          break;
-        default:
-          throw new Error("Input tidak valid");
-      }
+      const result = await this.dbExtraFunction.runTransaction(async (t) => {
+        const apikey = await this.repository.getByGuid(guid);
+        if (!apikey) throw new Error("Api Key Not Found");
 
-      const apikey = await this.ApiKeyRepository.getApiKeyByGuid(guid);
-      if (!apikey) return { success: false, message: "apikey not found" };
-
-      let data;
-      if (userRole === "admin") {
-        data = await this.ApiKeyRepository.updateApiKeyForAdmin(guid, note, expiryDate, projetId);
-      } else {
-        if (userId !== apikey.userId) {
-          return { success: false, message: "access denied" };
+        let data;
+        if (userRole === "admin") {
+          data = await this.repository.updateForAdmin(guid, note, expiryDate, projetId, t);
+        } else {
+          if (userId !== apikey.userId) {
+            throw new Error("Access Denied");
+          }
+          data = await this.repository.updateForUser(guid, note, expiryDate, projetId, userId, t);
         }
+        return data;
+      });
 
-        data = await this.ApiKeyRepository.updateApiKeyForUser(guid, note, expiryDate, projetId, userId);
-      }
-      return data;
+      return result;
     } catch (error) {
-      throw new Error(`Error Updating API Key: ${error.message}`);
+      throw new Error(`Error Updating API Key In Service Layer: ${error.message}`);
     }
   };
 }
 
-module.exports = new ApiKeyService(ApiKeyRepository);
+module.exports = new ApiKeyService(repository, dbExtraFunction);

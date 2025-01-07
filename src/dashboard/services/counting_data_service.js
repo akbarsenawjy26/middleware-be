@@ -1,26 +1,27 @@
-const dashboardRepository = require("../../models/repository/dashboard_repository");
+// const repository = require("../../models/repository/dashboard_repository");
+const repository = require("../../repository/dashboard_repository");
 
 class DashboardService {
-  constructor(dashboardRepository) {
-    this.dashboardRepository = dashboardRepository;
+  constructor(repository) {
+    this.repository = repository;
   }
 
   countingData = async (userRole, deviceUserId) => {
-    let userTotal, deviceTotal, apikeyTotal;
+    let projectTotal, deviceTotal, apikeyTotal;
 
     try {
       if (userRole === "admin") {
-        userTotal = await this.dashboardRepository.userCounterForAdmin();
-        deviceTotal = await this.dashboardRepository.deviceCounterForAdmin();
-        apikeyTotal = await this.dashboardRepository.apiKeyCounterForAdmin();
+        projectTotal = await this.repository.projectCounterForAdmin();
+        deviceTotal = await this.repository.deviceCounterForAdmin();
+        apikeyTotal = await this.repository.apiKeyCounterForAdmin();
       } else {
-        userTotal = await this.dashboardRepository.userCounterForUser(deviceUserId);
-        deviceTotal = await this.dashboardRepository.deviceCounterForUser(deviceUserId);
-        apikeyTotal = await this.dashboardRepository.apiKeyCounterForUser(deviceUserId);
+        projectTotal = await this.repository.projectCounterForUser(deviceUserId);
+        deviceTotal = await this.repository.deviceCounterForUser(deviceUserId);
+        apikeyTotal = await this.repository.apiKeyCounterForUser(deviceUserId);
       }
 
       return {
-        userTotal,
+        projectTotal,
         deviceTotal,
         apikeyTotal,
       };
@@ -30,4 +31,4 @@ class DashboardService {
   };
 }
 
-module.exports = new DashboardService(dashboardRepository);
+module.exports = new DashboardService(repository);

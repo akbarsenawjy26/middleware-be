@@ -1,0 +1,452 @@
+{
+    "tables": {
+        "types": {
+            "tableName": "types",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "guid": {
+                    "defaultValue": {
+                        "internal": true,
+                        "value": "Sequelize.UUIDV4"
+                    },
+                    "field": "guid",
+                    "seqType": "Sequelize.UUID"
+                },
+                "name_type": {
+                    "field": "name_type",
+                    "seqType": "Sequelize.STRING"
+                },
+                "status": {
+                    "field": "status",
+                    "seqType": "Sequelize.STRING"
+                },
+                "group": {
+                    "field": "group",
+                    "seqType": "Sequelize.JSON"
+                },
+                "userId": {
+                    "field": "userId",
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "NO ACTION",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdBy": {
+                    "field": "createdBy",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedBy": {
+                    "field": "updatedBy",
+                    "seqType": "Sequelize.DATE"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "tenants": {
+            "tableName": "tenants",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "guid": {
+                    "defaultValue": {
+                        "internal": true,
+                        "value": "Sequelize.UUIDV4"
+                    },
+                    "field": "guid",
+                    "seqType": "Sequelize.UUID"
+                },
+                "name_tenant": {
+                    "field": "name_tenant",
+                    "seqType": "Sequelize.STRING"
+                },
+                "status": {
+                    "field": "status",
+                    "seqType": "Sequelize.STRING"
+                },
+                "userId": {
+                    "field": "userId",
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "NO ACTION",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdBy": {
+                    "field": "createdBy",
+                    "seqType": "Sequelize.STRING"
+                },
+                "updatedBy": {
+                    "field": "updatedBy",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "devices": {
+            "tableName": "devices",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "guid": {
+                    "defaultValue": {
+                        "internal": true,
+                        "value": "Sequelize.UUIDV4"
+                    },
+                    "field": "guid",
+                    "seqType": "Sequelize.UUID"
+                },
+                "device_sn": {
+                    "field": "device_sn",
+                    "seqType": "Sequelize.STRING"
+                },
+                "device_name": {
+                    "field": "device_name",
+                    "seqType": "Sequelize.STRING"
+                },
+                "device_location": {
+                    "field": "device_location",
+                    "seqType": "Sequelize.STRING"
+                },
+                "status": {
+                    "field": "status",
+                    "seqType": "Sequelize.STRING"
+                },
+                "userId": {
+                    "field": "userId",
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "NO ACTION",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "tenantId": {
+                    "field": "tenantId",
+                    "allowNull": true,
+                    "references": {
+                        "model": "tenants",
+                        "key": "id"
+                    },
+                    "onDelete": "NO ACTION",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "projectId": {
+                    "field": "projectId",
+                    "allowNull": true,
+                    "references": {
+                        "model": "projects",
+                        "key": "id"
+                    },
+                    "onDelete": "NO ACTION",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "typeId": {
+                    "field": "typeId",
+                    "allowNull": true,
+                    "references": {
+                        "model": "types",
+                        "key": "id"
+                    },
+                    "onDelete": "NO ACTION",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdBy": {
+                    "field": "createdBy",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedBy": {
+                    "field": "updatedBy",
+                    "seqType": "Sequelize.DATE"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "users": {
+            "tableName": "users",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "guid": {
+                    "defaultValue": {
+                        "internal": true,
+                        "value": "Sequelize.UUIDV4"
+                    },
+                    "field": "guid",
+                    "seqType": "Sequelize.UUID"
+                },
+                "name": {
+                    "field": "name",
+                    "seqType": "Sequelize.STRING"
+                },
+                "username": {
+                    "field": "username",
+                    "seqType": "Sequelize.STRING"
+                },
+                "email": {
+                    "field": "email",
+                    "seqType": "Sequelize.STRING"
+                },
+                "password": {
+                    "field": "password",
+                    "seqType": "Sequelize.STRING"
+                },
+                "role": {
+                    "field": "role",
+                    "seqType": "Sequelize.STRING"
+                },
+                "status": {
+                    "field": "status",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdBy": {
+                    "field": "createdBy",
+                    "seqType": "Sequelize.STRING"
+                },
+                "updatedBy": {
+                    "field": "updatedBy",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "projects": {
+            "tableName": "projects",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "guid": {
+                    "defaultValue": {
+                        "internal": true,
+                        "value": "Sequelize.UUIDV4"
+                    },
+                    "field": "guid",
+                    "seqType": "Sequelize.UUID"
+                },
+                "vendor": {
+                    "field": "vendor",
+                    "seqType": "Sequelize.STRING"
+                },
+                "version": {
+                    "field": "version",
+                    "seqType": "Sequelize.STRING"
+                },
+                "project_name": {
+                    "field": "project_name",
+                    "seqType": "Sequelize.STRING"
+                },
+                "identity": {
+                    "field": "identity",
+                    "seqType": "Sequelize.STRING"
+                },
+                "topic": {
+                    "field": "topic",
+                    "seqType": "Sequelize.STRING"
+                },
+                "status": {
+                    "field": "status",
+                    "seqType": "Sequelize.STRING"
+                },
+                "userId": {
+                    "field": "userId",
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "NO ACTION",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "tenantId": {
+                    "field": "tenantId",
+                    "allowNull": true,
+                    "references": {
+                        "model": "tenants",
+                        "key": "id"
+                    },
+                    "onDelete": "NO ACTION",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdBy": {
+                    "field": "createdBy",
+                    "seqType": "Sequelize.STRING"
+                },
+                "updatedBy": {
+                    "field": "updatedBy",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "apikeys": {
+            "tableName": "apikeys",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "guid": {
+                    "defaultValue": {
+                        "internal": true,
+                        "value": "Sequelize.UUIDV4"
+                    },
+                    "field": "guid",
+                    "seqType": "Sequelize.UUID"
+                },
+                "api_key": {
+                    "field": "api_key",
+                    "seqType": "Sequelize.STRING"
+                },
+                "expires_at": {
+                    "field": "expires_at",
+                    "seqType": "Sequelize.DATE"
+                },
+                "note": {
+                    "field": "note",
+                    "seqType": "Sequelize.STRING"
+                },
+                "status": {
+                    "field": "status",
+                    "seqType": "Sequelize.STRING"
+                },
+                "userId": {
+                    "field": "userId",
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "NO ACTION",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "projectId": {
+                    "field": "projectId",
+                    "allowNull": true,
+                    "references": {
+                        "model": "projects",
+                        "key": "id"
+                    },
+                    "onDelete": "NO ACTION",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdBy": {
+                    "field": "createdBy",
+                    "seqType": "Sequelize.STRING"
+                },
+                "updatedBy": {
+                    "field": "updatedBy",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        }
+    },
+    "path": "/Users/akbarsenawijaya/iot-platform/authentication/migrations/_current.json",
+    "backupPath": "/Users/akbarsenawijaya/iot-platform/authentication/migrations/_current_bak.json",
+    "exists": false,
+    "revision": 1
+}

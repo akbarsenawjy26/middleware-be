@@ -1,12 +1,12 @@
-const userModels = require("../user_models");
+const { users } = require("../../../models");
 
 class UserRepository {
-  constructor(userModels) {
-    this.userModels = userModels;
+  constructor(users) {
+    this.users = users;
   }
 
   createUser = async (name, username, email, hashPassword, role) => {
-    return await userModels.create({
+    return await users.create({
       name: name,
       username: username,
       email: email,
@@ -16,19 +16,22 @@ class UserRepository {
   };
 
   deleteUser = async (guid) => {
-    return await userModels.destroy({
+    return await users.destroy({
       where: {
         guid: guid,
       },
     });
   };
 
-  getUserList = async () => {
-    return await userModels.findAll();
+  getUserList = async (limit, offset) => {
+    return await users.findAll({
+      limit,
+      offset,
+    });
   };
 
   getUserByGuid = async (guid) => {
-    return await userModels.findOne({
+    return await users.findOne({
       where: {
         guid,
       },
@@ -36,7 +39,7 @@ class UserRepository {
   };
 
   getUserByEmail = async (email) => {
-    return await userModels.findOne({
+    return await users.findOne({
       where: {
         email: email,
       },
@@ -44,7 +47,7 @@ class UserRepository {
   };
 
   getUserBySessionGuid = async (sessionGuid) => {
-    return await userModels.findOne({
+    return await users.findOne({
       attributes: ["id", "guid", "name", "username", "email", "role"],
       where: {
         guid: sessionGuid,
@@ -53,7 +56,7 @@ class UserRepository {
   };
 
   updateUser = async (guid, name, username, email, hashPassword, role) => {
-    return await userModels.update(
+    return await users.update(
       {
         name: name,
         username: username,
@@ -68,6 +71,10 @@ class UserRepository {
       }
     );
   };
+
+  countData = async () => {
+    return await users.count();
+  };
 }
 
-module.exports = new UserRepository(userModels);
+module.exports = new UserRepository(users);

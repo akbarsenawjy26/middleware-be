@@ -1,22 +1,23 @@
-const apiKeyRepository = require("../../models/repository/api-key_repository");
+// const repository = require("../../models/repository/api-key_repository");
+const repository = require("../../repository/api-key_repository");
 
 class ApiKeyService {
-  constructor(apiKeyRepository) {
-    this.apiKeyRepository = apiKeyRepository;
+  constructor(repository) {
+    this.repository = repository;
   }
 
   checkApiKey = async (apiKey) => {
     try {
-      const data = await this.apiKeyRepository.checkApiKey(apiKey);
+      const data = await this.repository.checkApiKey(apiKey);
       if (!data) {
         return null;
       }
-      console.log(data);
+
       return data;
     } catch (error) {
-      throw new Error(`Error Fetching API Key: ${error.message}`);
+      throw new Error(`Error Checking API Key In Service: ${error.message}`);
     }
   };
 }
 
-module.exports = new ApiKeyService(apiKeyRepository);
+module.exports = new ApiKeyService(repository);

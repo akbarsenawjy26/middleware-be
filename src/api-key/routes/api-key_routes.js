@@ -3,10 +3,11 @@ const router = express.Router();
 const apiKeyController = require("../controllers/api-key_controller");
 const middlewareUtils = require("../../../utils/middleware_utils");
 
-router.post("/", middlewareUtils.verifySession, apiKeyController.createApiKey);
-router.get("/", middlewareUtils.verifySession, apiKeyController.getApiKeyList);
-router.get("/:guid", middlewareUtils.verifySession, apiKeyController.getApiKeyByGuid);
-router.delete("/:guid", middlewareUtils.verifySession, apiKeyController.deleteApiKey);
-router.put("/:guid", middlewareUtils.verifySession, apiKeyController.updateApiKey);
+router.post("/", middlewareUtils.verifySession, apiKeyController.createController);
+router.get("/", middlewareUtils.verifySession, apiKeyController.getListController);
+router.get("/:guid", middlewareUtils.verifySession, apiKeyController.getByGuidController);
+router.get("/id/:id", middlewareUtils.verifySession, apiKeyController.getByIdController);
+router.delete("/:guid", middlewareUtils.verifySession, apiKeyController.deleteController);
+router.put("/:guid", middlewareUtils.verifySession, apiKeyController.updateController);
 
 module.exports = router;

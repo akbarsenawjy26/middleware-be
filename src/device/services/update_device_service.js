@@ -1,30 +1,31 @@
-const deviceRepository = require("../../models/repository/device_repository");
+// const repository = require("../../models/repository/device_repository");
+const repository = require("../../repository/device_repository");
 
 class DeviceService {
-  constructor(deviceRepository) {
-    this.deviceRepository = deviceRepository;
+  constructor(repository) {
+    this.repository = repository;
   }
 
-  updateDeviceName = async (guid, device_sn, device_name, device_type, device_location, projectId, userRole, userId) => {
+  update = async (guid, device_sn, device_name, device_location, projectId, userRole, userId, tenantId, typeId, group) => {
     try {
-      const device = await this.deviceRepository.getDeviceByGuid(guid);
-      if (!device) return { success: false, message: "device not found" };
+      const device = await this.repository.getByGuid(guid);
+      if (!device) return { success: false, message: "Device Not Found" };
 
       let data;
       if (userRole === "admin") {
-        data = await this.deviceRepository.updateDeviceForAdmin(guid, device_sn, device_name, device_type, device_location, projectId);
+        data = await this.repository.updateForAdmin(guid, device_sn, device_name, device_location, projectId, tenantId, typeId, group);
       } else {
         if (userId !== device.userId) {
-          return { success: false, message: "access denied" };
+          return { success: false, message: "Access Denied" };
         }
 
-        data = await this.deviceRepository.updateDeviceForUser(guid, userId, device_sn, device_name, device_type, device_location, projectId);
+        data = await this.repository.updateForUser(guid, userId, device_sn, device_name, device_location, projectId, tenantId, typeId, group);
       }
       return data;
     } catch (error) {
-      throw new Error(`Error Updating Device: ${error.message}`);
+      throw new Error(`Error Updating Device In Service Layer: ${error.message}`);
     }
   };
 }
 
-module.exports = new DeviceService(deviceRepository);
+module.exports = new DeviceService(repository);

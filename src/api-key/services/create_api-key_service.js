@@ -1,49 +1,31 @@
-const ApiKeyRepository = require("../../models/repository/api-key_repository");
+// const repository = require("../../models/repository/api-key_repository");
+const repository = require("../../repository/api-key_repository");
 const moment = require("moment");
 const generateApiKey = require("../../../utils/generate_api_utils");
+const dbExtraFunction = require("../../../utils/db_tx");
 
 class ApiKeyService {
-  constructor(generateApiKey, ApiKeyRepository) {
+  constructor(generateApiKey, repository, dbExtraFunction) {
     this.generateApiKey = generateApiKey;
-    this.ApiKeyRepository = ApiKeyRepository;
+    this.repository = repository;
+    this.dbExtraFunction = dbExtraFunction;
   }
 
-  createApiKey = async (userId, deviceUserId, expires_at, note, projectId) => {
+  create = async (userId, deviceUserId, expires_at, note, projectId) => {
     try {
-      let expiryDate = null;
+      let expiryDate = moment(expires_at).format("YYYY-MM-DD HH:mm:ss");
+      const result = await this.dbExtraFunction.runTransaction(async (t) => {
+        const apiKey = await this.generateApiKey.generateApiKey(userId);
 
-      switch (expires_at) {
-        case "3 hari":
-          expiryDate = moment().add(3, "days").toDate();
-          break;
-        case "7 hari":
-          expiryDate = moment().add(7, "days").toDate();
-          break;
-        case "1 bulan":
-          expiryDate = moment().add(1, "months").toDate();
-          break;
-        case "3 bulan":
-          expiryDate = moment().add(3, "months").toDate();
-          break;
-        case "1 tahun":
-          expiryDate = moment().add(1, "years").toDate();
-          break;
-        case "never":
-          expiryDate = null;
-          break;
-        default:
-          throw new Error("Input tidak valid");
-      }
+        const data = await this.repository.create(apiKey, deviceUserId, expiryDate, note, projectId);
 
-      const apiKey = await this.generateApiKey.generateApiKey(userId);
-
-      const data = await this.ApiKeyRepository.createApiKey(apiKey, deviceUserId, expiryDate, note, projectId);
-
-      return data;
+        return data;
+      });
+      return result;
     } catch (error) {
-      throw new Error(`Error Creating API Key: ${error.message}`);
+      throw new Error(`Error Creating API Key In Service Layer: ${error.message}`);
     }
   };
 }
 
-module.exports = new ApiKeyService(generateApiKey, ApiKeyRepository);
+module.exports = new ApiKeyService(generateApiKey, repository, dbExtraFunction);
