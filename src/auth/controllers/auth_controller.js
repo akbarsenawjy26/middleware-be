@@ -14,6 +14,7 @@ class AuthController {
 
       req.session.userGuid = await result.message.guid;
       console.log("Session After Login:", req.session);
+      console.log("Session After Login:", req.headers.cookie);
 
       return res.status(200).json(responseHelper.success(result.message, "Login successful!"));
     } catch (error) {
@@ -23,6 +24,7 @@ class AuthController {
 
   sessionCheck = async (req, res) => {
     try {
+      console.log("Session After Login:", req.headers.cookie);
       if (!req.session.userGuid) {
         return res.status(500).json(responseHelper.fail(null, "Please login first"));
       }
