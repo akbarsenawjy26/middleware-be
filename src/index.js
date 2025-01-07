@@ -1,6 +1,5 @@
 const express = require("express");
 const config = require("../config");
-// const helmet = require("helmet");
 const cors = require("cors");
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
@@ -8,11 +7,10 @@ const db = require("../config/auth_database_config");
 require("dotenv").config();
 const app = express();
 const port = config.port;
-// const sessionStore = SequelizeStore(session.Store);
 
 const store = new SequelizeStore({
   db: db.sequelizeConnection,
-  tableName: "sessions",
+  tableName: "Sessions",
   maxAge: 3600000,
 });
 
@@ -27,7 +25,7 @@ app.use(
   session({
     secret: config.sessionSecret,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     store: store,
     cookie: {
       httpOnly: true,
@@ -35,17 +33,6 @@ app.use(
     },
   })
 );
-
-// store
-//   .sync()
-//   .then(() => {
-//     console.log("Session table synced successfully!");
-//   })
-//   .catch((err) => {
-//     console.error("Error syncing session table:", err);
-//   });
-
-// app.use(helmet());
 
 const userRoutes = require("./user/routes/user_routes");
 const authRoutes = require("./auth/routes/auth_routes");
