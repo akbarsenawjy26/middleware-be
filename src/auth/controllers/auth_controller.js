@@ -23,7 +23,7 @@ class AuthController {
 
   sessionCheck = async (req, res) => {
     try {
-      if (!req.session) {
+      if (!req.session.userGuid) {
         return res.status(500).json(responseHelper.fail(null, "Please login first"));
       }
 
