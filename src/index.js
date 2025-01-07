@@ -73,6 +73,6 @@ const ca = fs.readFileSync("/etc/letsencrypt/live/103.52.115.128.nip.io/chain.pe
 const credentials = { key: privateKey, cert: certificate, ca: ca };
 
 // Create HTTPS server
-https.createServer(credentials, app).listen(3001, "0.0.0.0", () => {
+https.createServer(credentials, app).listen(port, "0.0.0.0", () => {
   console.log(`Service Backend Middleware Running on ${process.env.NODE_ENV} Environment`);
 });
