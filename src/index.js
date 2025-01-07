@@ -7,6 +7,8 @@ const SequelizeStore = require("connect-session-sequelize");
 const sessionStore = SequelizeStore(session.Store);
 const db = require("../config/auth_database_config");
 require("dotenv").config();
+const fs = require("fs");
+const https = require("https");
 
 const app = express();
 const port = config.port;
@@ -63,6 +65,14 @@ app.use("/api/v1/project", projectRoutes);
 app.use("/api/v1/tenant", tenantRoutes);
 app.use("/api/v1/type", typeRoutes);
 
-app.listen(port, "0.0.0.0", () => {
+// Set up HTTPS
+const privateKey = fs.readFileSync("/etc/letsencrypt/live/103.52.115.128.nip.io/privkey.pem", "utf8");
+const certificate = fs.readFileSync("/etc/letsencrypt/live/103.52.115.128.nip.io/cert.pem", "utf8");
+const ca = fs.readFileSync("/etc/letsencrypt/live/103.52.115.128.nip.io/chain.pem", "utf8");
+
+const credentials = { key: privateKey, cert: certificate, ca: ca };
+
+// Create HTTPS server
+https.createServer(credentials, app).listen(3001, "0.0.0.0", () => {
   console.log(`Service Backend Middleware Running on ${process.env.NODE_ENV} Environment`);
 });
