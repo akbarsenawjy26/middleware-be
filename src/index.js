@@ -16,9 +16,6 @@ const port = config.port;
 const corsOptions = {
   origin: ["http://localhost:3000"],
   credentials: true,
-  preflightContinue: true,
-  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Origin", "Content-Type", "Accept", "Authorization", "connect.sid", "Cookie"],
 };
 
 const store = new sessionStore({
