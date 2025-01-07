@@ -15,14 +15,17 @@ const port = config.port;
 
 const corsOptions = {
   origin: ["http://localhost:3000"],
-  credentials: true,
+  credentials: true, // Mengizinkan pengiriman cookies
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Origin", "Content-Type", "Accept", "Authorization", "Cookie", "X-Requested-With"],
 };
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 const store = new sessionStore({
   db: db.sequelizeConnection,
 });
-
-app.use(cors(corsOptions));
 
 app.use(cookieParser());
 
