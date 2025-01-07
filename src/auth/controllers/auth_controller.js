@@ -15,7 +15,15 @@ class AuthController {
       req.session.userGuid = await result.message.guid;
       console.log("Session After Login:", req.session);
 
-      return res.status(200).json(responseHelper.success(result.message, "Login successful!"));
+      return res
+        .status(200)
+        .set({
+          "Access-Control-Allow-Origin": "https://your-allowed-origin.com",
+          "Access-Control-Allow-Credentials": "true",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        })
+        .json(responseHelper.success(result.message, "Login successful!"));
     } catch (error) {
       return res.status(500).json(responseHelper.fail(null, "Internal server error"));
     }
