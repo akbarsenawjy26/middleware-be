@@ -14,7 +14,7 @@ const app = express();
 const port = config.port;
 
 const corsOptions = {
-  origin: ["http://localhost:3000"],
+  origin: ["http://localhost:3000", "http://103.52.115.128.nip.nip:3003"],
   credentials: true, // Mengizinkan pengiriman cookies
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Origin", "Content-Type", "Accept", "Authorization", "Cookie", "X-Requested-With"],
